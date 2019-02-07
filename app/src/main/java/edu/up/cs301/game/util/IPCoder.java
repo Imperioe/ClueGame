@@ -28,8 +28,8 @@ public class IPCoder {
 		try {
 			// loop through the device's network interfaces and internet address until one is found
 			// that is a well-formed UP address; return it when found
-			for (Enumeration<NetworkInterface> en = NetworkInterface
-					.getNetworkInterfaces(); en.hasMoreElements();) {
+			int breakpoint = 0;
+			for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
 				NetworkInterface intf = en.nextElement();
 				for (Enumeration<InetAddress> enumIpAddr = intf
 						.getInetAddresses(); enumIpAddr.hasMoreElements();) {
@@ -42,7 +42,7 @@ public class IPCoder {
 		} catch (SocketException ex) {
 			Log.e("IPCoder"/*this.toString()*/, ex.toString());
 		}
-		return "Unable to determine UP address.";
+		return "Unable to determine IP address.";
 	}
 	
 	/**

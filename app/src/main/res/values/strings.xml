@@ -12,7 +12,8 @@
     <string name="player_name">Player Name</string>
     <string name="player_type">Player Type</string>
     <string name="guest">Guest</string>
-    <string name="save_config_as_default">Save this Configuration as the Default</string><string name="start_the_game">Start Game!</string>
+    <string name="save_config_as_default">Save this Configuration as the Default</string>
+    <string name="start_the_game">Start Game!</string>
     
     <string name="dialog_continue_label">Continue Playing Game</string>
     <string name="dialog_quit_label">Quit</string>
@@ -49,4 +50,29 @@
         <item>Miss Scarlet</item>
         <item>Mrs. White</item>
     </string-array>
+
+    <!--WARNING: Part of Framework
+    - Proceed with Caution
+    -->
+    <!--BLE-->
+    <string name="ble_not_supported">BLE Not Supported</string>
+
+    <!--BLE Menu Items-->
+    <string name="title_devices">BLE Device Scan</string>
+    <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="no_data">No data</string>
+    <string name="unknown_characteristic">Unknown characteristic</string>
+    <string name="unknown_service">Unknown service</string>
+    <string name="unknown_device">Unknown device</string>
+    <string name="label_device_address">Device address:</string>
+    <string name="label_state">State:</string>
+    <string name="label_data">Data:</string>
+
+    <!-- Menu items -->
+    <string name="menu_connect">Connect</string>
+    <string name="menu_disconnect">Disconnect</string>
+    <string name="menu_scan">Scan</string>
+    <string name="menu_stop">Stop</string>
 </resources>

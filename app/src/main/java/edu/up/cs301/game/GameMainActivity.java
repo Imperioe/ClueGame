@@ -3,9 +3,12 @@ package edu.up.cs301.game;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,8 +27,10 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
+import android.widget.Toast;
 import edu.up.cs301.game.config.GameConfig;
 import edu.up.cs301.game.config.GamePlayerType;
+import edu.up.cs301.game.util.DeviceScanActivity;
 import edu.up.cs301.game.util.IPCoder;
 import edu.up.cs301.game.util.MessageBox;
 
@@ -78,6 +83,12 @@ View.OnClickListener {
 	// Each of these is initialized to point to various GUI controls
 	TableLayout playerTable = null;
 	ArrayList<TableRow> tableRows = new ArrayList<TableRow>();
+
+	//Holds whether or not the device in BLE capable
+	private boolean isBLE_Supported = false;
+
+	//The BluetoothAdapter represents the device's own Bluetooth adapter (the Bluetooth radio)
+	private BluetoothAdapter mBluetoothAdapter;
 
 	/*
 	 * ====================================================================
@@ -138,6 +149,37 @@ View.OnClickListener {
 	@Override
 	public final void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//Checks if the device placed on has BLE support then
+		//BLE-related features can be selectively disabled.
+		if (!getPackageManager().hasSystemFeature(	android.content.pm.PackageManager.FEATURE_BLUETOOTH_LE)) {
+			Log.i("BLE", "ble_not_supported");
+			Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+			//finish(); //I believe this would end the application
+			//gracefully disable BLE features
+			isBLE_Supported = false;
+		}else{
+			//BLE features are supported
+			isBLE_Supported = true;
+		}
+
+		// Initializes Bluetooth adapter.
+		final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+		mBluetoothAdapter = bluetoothManager.getAdapter();
+
+		//If >= 0, this code will be returned in onActivityResult() when the activity exits.
+		int REQUEST_ENABLE_BT = 2019;
+
+		// Ensures Bluetooth is available on the device and it is enabled. If not,
+		// displays a dialog requesting user permission to enable Bluetooth.
+		if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+		}
+
+		//This should switch Activities
+		//final Intent intent = new Intent(this, DeviceScanActivity.class);
+		//startActivity(intent);
 
 		// Initialize the layout
 		setContentView(R.layout.game_config_main);
