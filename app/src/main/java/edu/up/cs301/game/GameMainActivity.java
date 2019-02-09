@@ -177,9 +177,10 @@ View.OnClickListener {
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
 
+		//These two lines turn on bluetooth scanning for right now
 		//This should switch Activities
-		//final Intent intent = new Intent(this, DeviceScanActivity.class);
-		//startActivity(intent);
+		final Intent intent = new Intent(this, DeviceScanActivity.class);
+		startActivity(intent);
 
 		// Initialize the layout
 		setContentView(R.layout.game_config_main);
