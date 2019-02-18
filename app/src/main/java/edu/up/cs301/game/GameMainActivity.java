@@ -1,16 +1,33 @@
 package edu.up.cs301.game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
+import android.bluetooth.BluetoothGattServer;
+import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
+import android.bluetooth.le.AdvertiseCallback;
+import android.bluetooth.le.AdvertiseData;
+import android.bluetooth.le.AdvertiseSettings;
+import android.bluetooth.le.BluetoothLeAdvertiser;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -30,9 +47,9 @@ import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
 import edu.up.cs301.game.config.GameConfig;
 import edu.up.cs301.game.config.GamePlayerType;
-import edu.up.cs301.game.util.DeviceScanActivity;
 import edu.up.cs301.game.util.IPCoder;
 import edu.up.cs301.game.util.MessageBox;
+import edu.up.cs301.game.util.TimeProfile;
 
 /**
  * class GameMainActivity
@@ -84,11 +101,44 @@ View.OnClickListener {
 	TableLayout playerTable = null;
 	ArrayList<TableRow> tableRows = new ArrayList<TableRow>();
 
+	//Logger
+	private static final String TAG = "Bluetooth Logs";
+
 	//Holds whether or not the device in BLE capable
 	private boolean isBLE_Supported = false;
 
+	/* Bluetooth API */
+	private BluetoothManager mBluetoothManager;
+	private BluetoothGattServer mBluetoothGattServer;
+	private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
+
+	/* Collection of notification subscribers */
+	private Set<BluetoothDevice> mRegisteredDevices = new HashSet<BluetoothDevice>();
+
 	//The BluetoothAdapter represents the device's own Bluetooth adapter (the Bluetooth radio)
 	private BluetoothAdapter mBluetoothAdapter;
+
+
+	private BroadcastReceiver mBluetoothReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.STATE_OFF);
+
+			switch (state) {
+				case BluetoothAdapter.STATE_ON:
+					startAdvertising();
+					startServer();
+					break;
+				case BluetoothAdapter.STATE_OFF:
+					stopServer();
+					stopAdvertising();
+					break;
+				default:
+					// Do nothing
+			}
+
+		}
+	};
 
 	/*
 	 * ====================================================================
@@ -177,10 +227,21 @@ View.OnClickListener {
 			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
 
-		//These two lines turn on bluetooth scanning for right now
-		//This should switch Activities
-		final Intent intent = new Intent(this, DeviceScanActivity.class);
-		startActivity(intent);
+		//Set up Gatt Server for Bluetooth games
+		mBluetoothManager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+		BluetoothAdapter bluetoothAdapter = mBluetoothManager.getAdapter();
+
+		// Register for system Bluetooth events
+		IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+		registerReceiver(mBluetoothReceiver, filter);
+		if (!bluetoothAdapter.isEnabled()) {
+			Log.d(TAG, "Bluetooth is currently disabled...enabling");
+			bluetoothAdapter.enable();
+		} else {
+			Log.d(TAG, "Bluetooth enabled...starting services");
+			startAdvertising();
+			startServer();
+		}
 
 		// Initialize the layout
 		setContentView(R.layout.game_config_main);
@@ -781,6 +842,193 @@ View.OnClickListener {
 		return this.getResources().getString(R.string.remote_tab);
 	}// remoteTabString
 
+	//Bluetooth Methods
+	//region Bluetooth
+	/**
+	 * Begin advertising over Bluetooth that this device is connectable
+	 * and supports the Current Time Service.
+	 */
+	private void startAdvertising() {
+		BluetoothAdapter bluetoothAdapter = mBluetoothManager.getAdapter();
+		mBluetoothLeAdvertiser = bluetoothAdapter.getBluetoothLeAdvertiser();
+		if (mBluetoothLeAdvertiser == null) {
+			Log.w(TAG, "Failed to create advertiser");
+			return;
+		}
+
+		AdvertiseSettings settings = new AdvertiseSettings.Builder()
+				.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+				.setConnectable(true)
+				.setTimeout(0)
+				.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
+				.build();
+
+		AdvertiseData data = new AdvertiseData.Builder()
+				.setIncludeDeviceName(true)
+				.setIncludeTxPowerLevel(false)
+				.addServiceUuid(new ParcelUuid(TimeProfile.TIME_SERVICE))
+				.build();
+
+		mBluetoothLeAdvertiser
+				.startAdvertising(settings, data, mAdvertiseCallback);
+	}
+
+	/**
+	 * Stop Bluetooth advertisements.
+	 */
+	private void stopAdvertising() {
+		if (mBluetoothLeAdvertiser == null) return;
+
+		mBluetoothLeAdvertiser.stopAdvertising(mAdvertiseCallback);
+	}
+
+	/**
+	 * Initialize the GATT server instance with the services/characteristics
+	 * from the Time Profile.
+	 */
+	private void startServer() {
+		mBluetoothGattServer = mBluetoothManager.openGattServer(this, mGattServerCallback);
+		if (mBluetoothGattServer == null) {
+			Log.w(TAG, "Unable to create GATT server");
+			return;
+		}
+
+		mBluetoothGattServer.addService(TimeProfile.createTimeService());
+
+		// Initialize the local UI
+		//updateLocalUi(System.currentTimeMillis());
+	}
+
+	/**
+	 * Shut down the GATT server.
+	 */
+	private void stopServer() {
+		if (mBluetoothGattServer == null) return;
+
+		mBluetoothGattServer.close();
+	}
+
+	/**
+	 * Callback to receive information about the advertisement process.
+	 */
+	private AdvertiseCallback mAdvertiseCallback = new AdvertiseCallback() {
+		@Override
+		public void onStartSuccess(AdvertiseSettings settingsInEffect) {
+			Log.i(TAG, "LE Advertise Started.");
+		}
+
+		@Override
+		public void onStartFailure(int errorCode) {
+			Log.w(TAG, "LE Advertise Failed: "+errorCode);
+		}
+	};
+
+	/**
+	 * Callback to handle incoming requests to the GATT server.
+	 * All read/write requests for characteristics and descriptors are handled here.
+	 */
+	private BluetoothGattServerCallback mGattServerCallback = new BluetoothGattServerCallback() {
+
+		@Override
+		public void onConnectionStateChange(BluetoothDevice device, int status, int newState) {
+			if (newState == BluetoothProfile.STATE_CONNECTED) {
+				Log.i(TAG, "BluetoothDevice CONNECTED: " + device);
+			} else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+				Log.i(TAG, "BluetoothDevice DISCONNECTED: " + device);
+				//Remove device from any active subscriptions
+				mRegisteredDevices.remove(device);
+			}
+		}
+
+		@Override
+		public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
+												BluetoothGattCharacteristic characteristic) {
+			long now = System.currentTimeMillis();
+			if (TimeProfile.CURRENT_TIME.equals(characteristic.getUuid())) {
+				Log.i(TAG, "Read CurrentTime");
+				mBluetoothGattServer.sendResponse(device,
+						requestId,
+						BluetoothGatt.GATT_SUCCESS,
+						0,
+						TimeProfile.getExactTime(now, TimeProfile.ADJUST_NONE));
+			} else if (TimeProfile.LOCAL_TIME_INFO.equals(characteristic.getUuid())) {
+				Log.i(TAG, "Read LocalTimeInfo");
+				mBluetoothGattServer.sendResponse(device,
+						requestId,
+						BluetoothGatt.GATT_SUCCESS,
+						0,
+						TimeProfile.getLocalTimeInfo(now));
+			} else {
+				// Invalid characteristic
+				Log.w(TAG, "Invalid Characteristic Read: " + characteristic.getUuid());
+				mBluetoothGattServer.sendResponse(device,
+						requestId,
+						BluetoothGatt.GATT_FAILURE,
+						0,
+						null);
+			}
+		}
+
+		@Override
+		public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset,
+											BluetoothGattDescriptor descriptor) {
+			if (TimeProfile.CLIENT_CONFIG.equals(descriptor.getUuid())) {
+				Log.d(TAG, "Config descriptor read");
+				byte[] returnValue;
+				if (mRegisteredDevices.contains(device)) {
+					returnValue = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE;
+				} else {
+					returnValue = BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;
+				}
+				mBluetoothGattServer.sendResponse(device,
+						requestId,
+						BluetoothGatt.GATT_FAILURE,
+						0,
+						returnValue);
+			} else {
+				Log.w(TAG, "Unknown descriptor read request");
+				mBluetoothGattServer.sendResponse(device,
+						requestId,
+						BluetoothGatt.GATT_FAILURE,
+						0,
+						null);
+			}
+		}
+
+		@Override
+		public void onDescriptorWriteRequest(BluetoothDevice device, int requestId,
+											 BluetoothGattDescriptor descriptor,
+											 boolean preparedWrite, boolean responseNeeded,
+											 int offset, byte[] value) {
+			if (TimeProfile.CLIENT_CONFIG.equals(descriptor.getUuid())) {
+				if (Arrays.equals(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE, value)) {
+					Log.d(TAG, "Subscribe device to notifications: " + device);
+					mRegisteredDevices.add(device);
+				} else if (Arrays.equals(BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE, value)) {
+					Log.d(TAG, "Unsubscribe device from notifications: " + device);
+					mRegisteredDevices.remove(device);
+				}
+
+				if (responseNeeded) {
+					mBluetoothGattServer.sendResponse(device,
+							requestId,
+							BluetoothGatt.GATT_SUCCESS,
+							0,
+							null);
+				}
+			} else {
+				Log.w(TAG, "Unknown descriptor write request");
+				if (responseNeeded) {
+					mBluetoothGattServer.sendResponse(device,
+							requestId,
+							BluetoothGatt.GATT_FAILURE,
+							0,
+							null);
+				}
+			}
+		}
+	};
+	//endregion Bluetooth
 
 	/**
 	 * Helper-class so that we disable the name fields in the configuration
