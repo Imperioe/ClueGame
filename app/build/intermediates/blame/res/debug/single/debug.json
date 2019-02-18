@@ -1,19 +1,11 @@
 [
     {
-        "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_action_tombstone.xml.flat",
-        "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\layout\\notification_action_tombstone.xml"
-    },
-    {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_game_player_list_row.xml.flat",
         "source": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\src\\main\\res\\layout\\game_player_list_row.xml"
     },
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_notify_panel_notification_icon_bg.png.flat",
         "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\drawable-hdpi-v4\\notify_panel_notification_icon_bg.png"
-    },
-    {
-        "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_template_icon_group.xml.flat",
-        "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\layout\\notification_template_icon_group.xml"
     },
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_template_lines_media.xml.flat",
@@ -34,10 +26,6 @@
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_notification_bg_normal.9.png.flat",
         "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\drawable-mdpi-v4\\notification_bg_normal.9.png"
-    },
-    {
-        "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout-v16_notification_template_custom_big.xml.flat",
-        "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\layout-v16\\notification_template_custom_big.xml"
     },
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_media_action.xml.flat",
@@ -140,12 +128,12 @@
         "source": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\src\\main\\res\\drawable-mdpi\\col_mustard.png"
     },
     {
-        "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout-v21_notification_template_custom_big.xml.flat",
-        "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\layout-v21\\notification_template_custom_big.xml"
-    },
-    {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_notification_bg_low_pressed.9.png.flat",
         "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\drawable-xhdpi-v4\\notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout-v21_notification_template_custom_big.xml.flat",
+        "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\layout-v21\\notification_template_custom_big.xml"
     },
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-xhdpi-v4_notification_bg_normal_pressed.9.png.flat",
@@ -174,10 +162,6 @@
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi_miss_scarlet.png.flat",
         "source": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\src\\main\\res\\drawable-mdpi\\miss_scarlet.png"
-    },
-    {
-        "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_notification_action.xml.flat",
-        "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\layout\\notification_action.xml"
     },
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\raw_log.txt.flat",

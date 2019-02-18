@@ -4,11 +4,11 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "edu.up.cs301.game"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 26
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_5
-            targetCompatibility JavaVersion.VERSION_1_5
+            sourceCompatibility JavaVersion.VERSION_1_7
+            targetCompatibility JavaVersion.VERSION_1_7
         }
     }
     buildTypes {
