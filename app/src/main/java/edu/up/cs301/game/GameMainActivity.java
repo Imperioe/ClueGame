@@ -893,11 +893,11 @@ View.OnClickListener {
 				.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
 				.build();
 
-		ParcelUuid p = new ParcelUuid(TimeProfile.TIME_SERVICE);
+		//ParcelUuid p = new ParcelUuid(TimeProfile.TIME_SERVICE);
 		AdvertiseData data = new AdvertiseData.Builder()
 				.setIncludeDeviceName(true)
 				.setIncludeTxPowerLevel(false)
-				.addServiceData(p, getString(R.string.add_player).getBytes())
+				.addServiceData(new ParcelUuid(TimeProfile.TIME_SERVICE), getString(R.string.app_name).getBytes())
 				.build();
 
 

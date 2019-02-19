@@ -7,12 +7,15 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +30,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import edu.up.cs301.game.R;
 
@@ -260,12 +264,15 @@ public class BluetoothFragment extends ListFragment {
                 @Override
                 public void onScanResult(int callbackType, ScanResult result) {
                     final ScanResult res = result;
+
                     getActivity().runOnUiThread(new Runnable() {
                         BluetoothDevice device = res.getDevice();
+                        ScanRecord rec = res.getScanRecord();
+
+
                         //@Override
                         public void run() {
-                            if(device.getName() != null && device.getName().contains("Tablet")) {
-                                //Log.i("Device Found", new String(scanRecord));
+                            if(device.getName() != null && new String(rec.getServiceData(new ParcelUuid(TimeProfile.TIME_SERVICE))).equals(getString(R.string.app_name))) {
                                 mLeDeviceListAdapter.addDevice(device);
                                 mLeDeviceListAdapter.notifyDataSetChanged();
                             }
