@@ -75,4 +75,6 @@
     <string name="menu_disconnect">Disconnect</string>
     <string name="menu_scan">Scan</string>
     <string name="menu_stop">Stop</string>
+    <string name="bluetooth_list">Bluetooth Games</string>
+    <string name="BluetoothScan">Scan</string>
 </resources>

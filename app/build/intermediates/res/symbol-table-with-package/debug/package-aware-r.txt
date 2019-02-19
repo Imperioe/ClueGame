@@ -102,6 +102,11 @@ id ballRoomTextView
 id billiardCheckBox
 id billiardRoomTextView
 id blocking
+id blueHeaderRow
+id bluetoothLayout
+id bluetoothList
+id bluetoothScanButton
+id bluetooth_layout
 id boardLayout
 id boardView
 id cancelButton
@@ -241,6 +246,7 @@ id wrenchTextview
 integer cancel_button_image_alpha
 integer status_bar_notification_info_maxnum
 layout actionbar_indeterminate_progress
+layout bluetooth_layout
 layout game_clue_gui
 layout game_config_main
 layout game_config_tabhost
@@ -248,7 +254,6 @@ layout game_local_tab
 layout game_player_list_row
 layout game_remote_tab
 layout gatt_services_characteristics
-layout listitem_device
 layout notification_action
 layout notification_action_tombstone
 layout notification_media_action
@@ -269,10 +274,12 @@ menu bluetooth_main
 menu game_main
 menu gatt_services
 raw log
+string BluetoothScan
 string add_player
 string app_name
 string begin_game
 string ble_not_supported
+string bluetooth_list
 string connected
 string dialog_continue_label
 string dialog_quit_label
