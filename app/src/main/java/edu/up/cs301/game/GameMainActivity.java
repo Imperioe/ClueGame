@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -31,6 +32,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
+import android.provider.SyncStateContract;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -891,11 +893,14 @@ View.OnClickListener {
 				.setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
 				.build();
 
+		ParcelUuid p = new ParcelUuid(TimeProfile.TIME_SERVICE);
 		AdvertiseData data = new AdvertiseData.Builder()
 				.setIncludeDeviceName(true)
 				.setIncludeTxPowerLevel(false)
-				.addServiceUuid(new ParcelUuid(TimeProfile.TIME_SERVICE))
+				.addServiceUuid(p)
+				.addServiceData(p, getString(R.string.add_player).getBytes())
 				.build();
+
 
 		mBluetoothLeAdvertiser
 				.startAdvertising(settings, data, mAdvertiseCallback);
