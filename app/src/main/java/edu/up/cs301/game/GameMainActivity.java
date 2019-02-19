@@ -897,7 +897,6 @@ View.OnClickListener {
 		AdvertiseData data = new AdvertiseData.Builder()
 				.setIncludeDeviceName(true)
 				.setIncludeTxPowerLevel(false)
-				.addServiceUuid(p)
 				.addServiceData(p, getString(R.string.add_player).getBytes())
 				.build();
 

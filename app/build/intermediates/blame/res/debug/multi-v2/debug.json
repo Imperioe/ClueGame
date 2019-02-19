@@ -61,10 +61,10 @@
             ]
         },
         {
-            "outputFile": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\values-is_values-is.arsc.flat",
+            "outputFile": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\values-hu_values-hu.arsc.flat",
             "map": [
                 {
-                    "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\values-is\\values-is.xml",
+                    "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\values-hu\\values-hu.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -76,10 +76,10 @@
             ]
         },
         {
-            "outputFile": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\values-hu_values-hu.arsc.flat",
+            "outputFile": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\values-is_values-is.arsc.flat",
             "map": [
                 {
-                    "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\values-hu\\values-hu.xml",
+                    "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\values-is\\values-is.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
