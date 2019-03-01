@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import edu.up.cs301.game.config.GameConfig;
 import edu.up.cs301.game.config.GamePlayerType;
+import edu.up.cs301.game.util.GattServer;
 
 /**
  * Created by Noah on 11/13/2016.
@@ -54,7 +55,7 @@ public class ClueMainActivity extends GameMainActivity {
         });
 
         // Default Game config is created, taking in the playerTypes  minimum (3) players, maximum (6) players, and port number
-        GameConfig defaultConfig = new GameConfig(playerTypes, 3, 6, "Clue", PORT_NUMBER);
+        GameConfig defaultConfig = new GameConfig(playerTypes, 3, 6, "Clue", PORT_NUMBER, gattServer, bluetoothLeService);
 
         //Add default players with their player name and type
         defaultConfig.addPlayer("Human", 0);
@@ -63,6 +64,7 @@ public class ClueMainActivity extends GameMainActivity {
 
         //Set the remote data with the remote player as a type 0 player
         defaultConfig.setRemoteData("Remote Player", "", 0);
+        defaultConfig.setBluetoothData("Bluetooth Player",1);
 
         //Set the game player types
         gamePlayerTypes = playerTypes;
