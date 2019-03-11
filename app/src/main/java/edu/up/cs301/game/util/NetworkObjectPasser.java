@@ -114,7 +114,7 @@ public abstract class NetworkObjectPasser {
 		
 		// run-method, which runs in the separate thread
 		public void run() {
-			Log.i("NetworkObjectPasser", "starting run method at bottom");
+			Log.i("NetworkObjectPasser", "starting run method at bottom"); //TODO: This is vague
 			
 			// the socket connection
 			Socket socket = null;

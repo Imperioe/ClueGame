@@ -6,50 +6,50 @@
     android:orientation="vertical" >
 
     <TableLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:stretchColumns="*" >
+
+    <TableRow
+        android:id="@+id/tableHeadingRow"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="*" >
+        android:layout_height="wrap_content" >
 
-        <TableRow
-            android:id="@+id/tableHeadingRow"
+        <TextView
+            android:id="@+id/playerNameHeadingText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|left"
+            android:text="@string/player_name" />
 
-            <TextView
-                android:id="@+id/playerNameHeadingText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|left"
-                android:text="@string/player_name" />
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player Type"
+            android:textStyle="bold|italic" />
 
-            <TextView
-                android:id="@+id/textView1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Player Type"
-                android:textStyle="bold|italic" />
+    </TableRow>
 
-        </TableRow>
+    <TableRow
+        android:id="@+id/tableDataRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-        <TableRow
-            android:id="@+id/tableDataRow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+        <EditText
+            android:id="@+id/remoteNameEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:text="@string/guest" />
 
-            <EditText
-                android:id="@+id/remoteNameEditText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:text="@string/guest" />
+        <Spinner
+            android:id="@+id/remote_player_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-            <Spinner
-                android:id="@+id/remote_player_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </TableRow>
-    </TableLayout>
+    </TableRow>
+</TableLayout>
 
     <TextView
         android:id="@+id/serverIPCode"
@@ -69,4 +69,32 @@
         <requestFocus />
     </EditText>
 
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow
+            android:id="@+id/blueHeaderRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+            <TextView
+                android:id="@+id/bluetoothList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bluetooth_list"
+                android:textStyle="bold"
+                android:textSize="20dp"/>
+
+            <Button
+                android:id="@+id/bluetoothScanButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/BluetoothScan" />
+        </TableRow>
+    </TableLayout>
+
+    <include
+        android:id="@+id/bluetoothLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/bluetooth_layout"/>
 </LinearLayout>

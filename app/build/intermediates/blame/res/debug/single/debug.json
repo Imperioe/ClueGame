@@ -12,6 +12,10 @@
         "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-media-compat-26.0.0.aar\\d74d3351c21f37841ae96cbfbc418e50\\res\\layout\\notification_template_lines_media.xml"
     },
     {
+        "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_bluetooth_layout.xml.flat",
+        "source": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\src\\main\\res\\layout\\bluetooth_layout.xml"
+    },
+    {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\drawable_notification_bg.xml.flat",
         "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\drawable\\notification_bg.xml"
     },
@@ -98,10 +102,6 @@
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4_notification_bg_normal_pressed.9.png.flat",
         "source": "C:\\Users\\SBEBS\\.gradle\\caches\\transforms-1\\files-1.1\\support-compat-26.0.0.aar\\d05f015967aef76107397265aaa616c6\\res\\drawable-hdpi-v4\\notification_bg_normal_pressed.9.png"
-    },
-    {
-        "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_listitem_device.xml.flat",
-        "source": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\src\\main\\res\\layout\\listitem_device.xml"
     },
     {
         "merged": "C:\\Users\\SBEBS\\Documents\\GitHub\\ClueGame2\\app\\build\\intermediates\\res\\merged\\debug\\layout_actionbar_indeterminate_progress.xml.flat",

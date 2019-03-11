@@ -79,9 +79,8 @@ public class ProxyGame implements Game {
         	public void onReceiveObject(Object obj) {
         		Log.i("ProxyGame", "received object ("+obj.getClass()+")");
         		try {
-        			boolean b = obj instanceof GameInfo;
-        			if (b) {
-        				// object is a GameStae object
+        			if (obj instanceof GameInfo) {
+        				// object is a GameState object
         				GameInfo gs = (GameInfo)obj;
         				gs.setGame(ProxyGame.this);
         				synchronized(this) {
@@ -107,7 +106,7 @@ public class ProxyGame implements Game {
         		}
         		catch (Exception x) {
         			// if any other exception occurs, log it
-        			Log.i(x.getClass().toString(), x.getMessage());
+        			Log.e(x.getClass().toString(), x.getMessage());
         		}
         	}
         };
