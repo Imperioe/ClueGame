@@ -1,5 +1,6 @@
 package edu.up.cs301.game.util;
 
+import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -25,16 +26,18 @@ public abstract class BluetoothPasser {
     private Handler sendHandler;
 
     private BluetoothLeService bluetoothLeService;
-    private GattServer gattServer;
+    private BluetoothSocket bluetoothSocket;
+    private boolean imHost;
 
     // a queue for collecting objects that "sent" to this object
     // before the network connection is established
     private Queue<Object> objQueue = new LinkedList<Object>();
 
 
-    public BluetoothPasser(GattServer gs, BluetoothLeService bles){
-        gattServer = gs;
+    public BluetoothPasser(BluetoothSocket bluetoothSocket, BluetoothLeService bles, boolean host){
+        this.bluetoothSocket = bluetoothSocket;
         bluetoothLeService = bles;
+        imHost = host;
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             out = new ObjectOutputStream(bos);
@@ -100,6 +103,29 @@ public abstract class BluetoothPasser {
         }
         byte[] serialized = bos.toByteArray();
         int packets = serialized.length/20;
+        if(imHost){
+            while(bluetoothSocket == null){
+                Log.i(TAG, "Gatt Server is null");
+                Thread.yield();
+            }
+            Log.i(TAG, "Writing Bluetooth Packets as Host");
+            //gattServer.addToSendingQueue(new QueueObject((packets+"").getBytes(),DataTransferProfile.TRANSFER_DESC01));
+            for(int i = 0;i<packets;i++) {
+                int start = i * 20;
+                int stop = (i * 20) + 20;
+                if (stop > serialized.length) {
+                    stop = serialized.length;
+                }
+
+                //gattServer.addToSendingQueue(new QueueObject(Arrays.copyOfRange(serialized, start, stop), DataTransferProfile.TRANSFER_DESC_LIST[i]));
+            }
+            Log.i(TAG, "Finished Writing Bluetooth Packets as Host");
+            return;
+        }
+
+        while(bluetoothLeService == null){
+            Thread.yield();
+        }
         bluetoothLeService.writeCustomCharacteristic((new String(packets+"")).getBytes(),DataTransferProfile.TRANSFER_DESC01);
         for(int i = 0;i<packets;i++) {
             int start = i * 20;
@@ -165,9 +191,28 @@ public abstract class BluetoothPasser {
             for (;;) {
                 try {
                     Log.i(TAG, "ready to read object");
-                    Object obj = gattServer.getReceivedObject();
-                    Log.i(TAG, "object read ("+obj.getClass()+")");
-                    onReceiveObject(obj);
+                    Object obj;
+                    if(imHost) {
+                        //obj = gattServer.getReceivedObject();
+                    }else{
+                        String data = "";
+                        String size = bluetoothLeService.readCustomCharacteristic(DataTransferProfile.TRANSFER_DESC01);
+                        if(size == null){
+                            continue;
+                        }
+
+                        for(int i = 0; i < Integer.getInteger(size); i++){
+                            String result = bluetoothLeService.readCustomCharacteristic(DataTransferProfile.TRANSFER_DESC_LIST[i]);
+                            if(result == null){
+                                Log.e(TAG, "Something is wrong with the Bluetooth data");
+                            }
+                            data+=result;
+                        }
+
+                        obj = data;
+                    }
+                    //Log.i(TAG, "object read ("+obj.getClass()+")");
+                    //onReceiveObject(obj);
                 }
                 catch (Exception x) {
                     break;

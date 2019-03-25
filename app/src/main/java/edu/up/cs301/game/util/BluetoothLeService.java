@@ -47,6 +47,9 @@ public class BluetoothLeService extends Service {
     public final static String EXTRA_DATA =
             "com.example.bluetooth.le.EXTRA_DATA";
 
+    //For Receive
+    private String readValue = null;
+
     // Implements callback methods for GATT events that the app cares about.  For example,
     // connection change and services discovered.
     public final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
@@ -114,6 +117,14 @@ public class BluetoothLeService extends Service {
             Log.i(TAG, descriptor.getValue().length+"");
             super.onDescriptorWrite(gatt,descriptor,status);
             //gatt.writeCharacteristic(characteristic);
+        }
+
+        @Override
+        public void onDescriptorRead(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status){
+            Log.i(TAG, "Read Descriptor");
+            Log.i(TAG, new String(descriptor.getValue()));
+            readValue = new String(descriptor.getValue());
+            super.onDescriptorRead(gatt, descriptor, status);
         }
     };
 
@@ -361,5 +372,34 @@ public class BluetoothLeService extends Service {
         if(mBluetoothGatt.writeDescriptor(mWriteDescriptor) == false){
             Log.w(TAG, "Failed to write Descriptor " +descriptor);
         }
+    }
+
+    public String readCustomCharacteristic(UUID descriptor) {
+        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
+            Log.w(TAG, "BluetoothAdapter not initialized");
+            return null;
+        }
+        /*check if the service is available on the device*/
+        BluetoothGattService mCustomService = mBluetoothGatt.getService(UUID.fromString("00001110-0000-1000-8000-00805f9b34fb"));
+        if(mCustomService == null){
+            Log.w(TAG, "Custom BLE Service not found");
+            return null;
+        }
+        /*get the read characteristic from the service*/
+        BluetoothGattCharacteristic mReadCharacteristic = mCustomService.getCharacteristic(UUID.fromString("00000002-0000-1000-8000-00805f9b34fb"));
+        BluetoothGattDescriptor mReadDescriptor = mReadCharacteristic.getDescriptor(descriptor);
+        if(mBluetoothGatt.readDescriptor(mReadDescriptor) == false){
+            Log.w(TAG, "Failed to read characteristic");
+        }
+        return getReadValue();
+    }
+
+    private String getReadValue(){
+        while(readValue == null){
+            Thread.yield();
+        }
+        String ret = readValue;
+        readValue = null;
+        return ret;
     }
 }

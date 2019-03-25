@@ -11,13 +11,10 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothGattServer;
-import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.bluetooth.BluetoothServerSocket;
+import android.bluetooth.BluetoothSocket;
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
@@ -57,6 +54,7 @@ import edu.up.cs301.game.util.DataTransferProfile;
 import edu.up.cs301.game.util.GattServer;
 import edu.up.cs301.game.util.IPCoder;
 import edu.up.cs301.game.util.MessageBox;
+import edu.up.cs301.game.util.RFCOMMServer;
 
 /**
  * class GameMainActivity
@@ -116,7 +114,7 @@ View.OnClickListener {
 	//To Connect to the other Bluetooth
 	private TabHost tabHost;
 	private BluetoothFragment fragment;
-	protected GattServer gattServer;
+	protected RFCOMMServer rfcommserver;
 	protected BluetoothLeService bluetoothLeService;
 
 
@@ -166,8 +164,8 @@ View.OnClickListener {
 		return ProxyGame.create(portNum, hostName);
 	}
 
-	private BluetoothGame createBluetoothGame(GattServer gattServer, BluetoothLeService bluetoothLeService){
-		return BluetoothGame.create(gattServer,bluetoothLeService);
+	private BluetoothGame createBluetoothGame(BluetoothSocket bluetoothSocket, BluetoothLeService bluetoothLeService, boolean host){
+		return BluetoothGame.create(bluetoothSocket,bluetoothLeService, host);
 	}
 
 	/*
@@ -184,6 +182,7 @@ View.OnClickListener {
 	public final void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+
 		//Checks if the device placed on has BLE support then
 		//BLE-related features can be selectively disabled.
 		if (!getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_BLUETOOTH_LE)) {
@@ -197,8 +196,14 @@ View.OnClickListener {
 			Log.i(TAG+":Start", "BLE Supported");
 		}
 
-		gattServer = new GattServer();
-		if(!gattServer.startGattServer(getApplicationContext())){ //Not sure if correct context
+		//gattServer = new GattServer();
+		//if(!gattServer.startGattServer(getApplicationContext())){
+		//	return;
+		//}
+
+		//Starting RFCOMM Server
+		rfcommserver = new RFCOMMServer();
+		if(!rfcommserver.startRFCOMMServer(getApplicationContext())){
 			return;
 		}
 
@@ -374,7 +379,7 @@ View.OnClickListener {
 
 		Log.i(TAG, config.getIpCode().equals("")+"");
 		if(!config.isLocal() && config.getIpCode().equals("")){
-			game = createBluetoothGame(gattServer, bluetoothLeService);
+			game = createBluetoothGame(rfcommserver.getSocket(), bluetoothLeService,false);
 
 			if(game == null){
 				return "Could not find Bluetooth game";

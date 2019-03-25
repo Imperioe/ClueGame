@@ -27,6 +27,7 @@ import java.io.ObjectInputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.LinkedTransferQueue;
 
 import edu.up.cs301.game.R;
 
@@ -45,11 +46,19 @@ public class GattServer {
     /* Collection of notification subscribers */
     private Set<BluetoothDevice> mRegisteredDevices = new HashSet<BluetoothDevice>();
 
+    //Received Object
     private boolean hasWrite = false;
     private Object receievedObject = null;
     private char[] transferString = null;
     private int transferCount = 0;
     private int writeCount = 0;
+
+    //Sending Object
+    private boolean canRead = false;
+    private boolean sending = false;
+    private int transferSendCount = 0;
+    private int sendCount = 0;
+    private LinkedTransferQueue<QueueObject> toSendQueue = new LinkedTransferQueue<>();
 
     public boolean startGattServer(Context context){
         this.context = context;
@@ -213,15 +222,6 @@ public class GattServer {
         @Override
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
                                                 BluetoothGattCharacteristic characteristic) {
-            //long now = System.currentTimeMillis();
-            if (DataTransferProfile.TRANSFER_CHAR.equals(characteristic.getUuid())) {
-                Log.i(TAG, "Read Transfer Characteristic");
-				/*mBluetoothGattServer.sendResponse(device,
-						requestId,
-						BluetoothGatt.GATT_SUCCESS,
-						0,
-						TimeProfile.getExactTime(now, TimeProfile.ADJUST_NONE));*/
-            } else {
                 // Invalid characteristic
                 Log.w(TAG, "Invalid Characteristic Read: " + characteristic.getUuid());
                 mBluetoothGattServer.sendResponse(device,
@@ -229,33 +229,130 @@ public class GattServer {
                         BluetoothGatt.GATT_FAILURE,
                         0,
                         null);
-            }
         }
 
         @Override
         public void onDescriptorReadRequest(BluetoothDevice device, int requestId, int offset,
                                             BluetoothGattDescriptor descriptor) {
+            //TODO: The Client must request an update
             if (DataTransferProfile.TRANSFER_DESC01.equals(descriptor.getUuid())) {
                 Log.d(TAG, "Transfer Descriptor read");
-                byte[] returnValue;
-                if (mRegisteredDevices.contains(device)) {
-                    returnValue = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE;
-                } else {
-                    returnValue = BluetoothGattDescriptor.DISABLE_NOTIFICATION_VALUE;
+                if(!canRead){
+                    Log.w(TAG, "Waiting for Updated State from Client");
+                    mBluetoothGattServer.sendResponse(device,
+                            requestId,
+                            BluetoothGatt.GATT_FAILURE,
+                            0,
+                            "Waiting for Update".getBytes());
+                    return;
                 }
+
+                if(sending){
+                    Log.w(TAG, "Already Sending");
+                    mBluetoothGattServer.sendResponse(device,
+                            requestId,
+                            BluetoothGatt.GATT_FAILURE,
+                            0,
+                            "Sending".getBytes());
+                    return;
+                }
+
+                sending = true;
+                //Get the next item to send, tell the Client how many packets to request.
+
+                QueueObject qo = toSendQueue.peek();
+                if(qo == null){
+                    mBluetoothGattServer.sendResponse(device,
+                            requestId,
+                            BluetoothGatt.GATT_FAILURE,
+                            0,
+                            "No Update".getBytes());
+                    sending = false;
+                    return;
+                }else if(qo.getUUID() != descriptor.getUuid()){
+                    mBluetoothGattServer.sendResponse(device,
+                            requestId,
+                            BluetoothGatt.GATT_FAILURE,
+                            0,
+                            "Wrong UUID Request".getBytes());
+                    return;
+                }
+
+                toSendQueue.poll();
+                //Record the expected packet transfer
+                transferSendCount = Integer.getInteger(new String(qo.getData()));
                 mBluetoothGattServer.sendResponse(device,
                         requestId,
                         BluetoothGatt.GATT_SUCCESS,
                         0,
-                        returnValue);
-            } else {
-                Log.w(TAG, "Unknown descriptor read request");
+                        qo.getData());
+                return;
+            }
+            if(canRead) {
+                for (UUID transferDesc : DataTransferProfile.TRANSFER_DESC_LIST) {
+                    if (transferDesc.equals(descriptor.getUuid())) {
+                        if (sending) {
+                            QueueObject qo = toSendQueue.peek();
+                            if(qo == null){
+                                mBluetoothGattServer.sendResponse(device,
+                                        requestId,
+                                        BluetoothGatt.GATT_FAILURE,
+                                        0,
+                                        "No Update".getBytes());
+                                sending = false;
+                                return;
+                            }else if(qo.getUUID() != descriptor.getUuid()){
+                                mBluetoothGattServer.sendResponse(device,
+                                        requestId,
+                                        BluetoothGatt.GATT_FAILURE,
+                                        0,
+                                        "Wrong UUID Request".getBytes());
+                                return;
+                            }
+
+                            toSendQueue.poll();
+                            //Update the count before sending
+                            sendCount++;
+                            mBluetoothGattServer.sendResponse(device,
+                                    requestId,
+                                    BluetoothGatt.GATT_SUCCESS,
+                                    0,
+                                    qo.getData());
+                            if(transferSendCount == sendCount){
+                                transferSendCount = 0;
+                                sendCount = 0;
+                                sending = false;
+                                canRead = false; //It now excepts a response
+                            }
+                            return;
+                        } else {
+                            Log.w(TAG, "Not Sending");
+                            mBluetoothGattServer.sendResponse(device,
+                                    requestId,
+                                    BluetoothGatt.GATT_FAILURE,
+                                    0,
+                                    "Not Sending".getBytes());
+                            return;
+                        }
+                    }
+
+                }
+            }else{
+                Log.w(TAG, "Waiting for Updated State from Client");
                 mBluetoothGattServer.sendResponse(device,
                         requestId,
                         BluetoothGatt.GATT_FAILURE,
                         0,
-                        null);
+                        "Waiting for Update".getBytes());
+                return;
             }
+
+            Log.w(TAG, "Unknown descriptor read request");
+            mBluetoothGattServer.sendResponse(device,
+                    requestId,
+                    BluetoothGatt.GATT_FAILURE,
+                    0,
+                    "Unknown descriptor".getBytes());
         }
 
         @Override
@@ -263,6 +360,7 @@ public class GattServer {
                                              BluetoothGattDescriptor descriptor,
                                              boolean preparedWrite, boolean responseNeeded,
                                              int offset, byte[] value) {
+            //TODO: NEEDs to make sure hasWrite is not happening
             Log.i(TAG, "Descriptor Write Request");
             Log.i(TAG, new String(value) + "");
             if(DataTransferProfile.TRANSFER_DESC01.equals(descriptor.getUuid())){
@@ -289,6 +387,7 @@ public class GattServer {
                     }
 
                     String val = new String(value);
+                    Log.i(TAG, val);
                     synchronized(this) {
 
                         for (int i = 0; i < val.length(); i++) {
@@ -304,6 +403,7 @@ public class GattServer {
                                 in = new ObjectInputStream(bis);
                                 receievedObject = in.readObject();
                                 hasWrite = true;
+                                canRead = true;
                             } catch(IOException ioe) {
                                 Log.e(TAG, ioe.getMessage());
                             }catch (ClassNotFoundException cnfe) {
@@ -351,6 +451,11 @@ public class GattServer {
         receievedObject = null;
         transferString = null;
         return retObj;
+    }
+
+    public boolean addToSendingQueue(QueueObject queueObject){
+        toSendQueue.add(queueObject);
+        return true;
     }
     //endregion Bluetooth
 }

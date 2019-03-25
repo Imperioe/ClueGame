@@ -56,7 +56,7 @@ public class ClueMainActivity extends GameMainActivity {
 
 
         // Default Game config is created, taking in the playerTypes  minimum (3) players, maximum (6) players, and port number
-        GameConfig defaultConfig = new GameConfig(playerTypes, 3, 6, "Clue", PORT_NUMBER, gattServer, bluetoothLeService);
+        GameConfig defaultConfig = new GameConfig(playerTypes, 3, 6, "Clue", PORT_NUMBER, rfcommserver.getSocket(), bluetoothLeService, true);
 
         //Add default players with their player name and type
         defaultConfig.addPlayer("Human", 0);

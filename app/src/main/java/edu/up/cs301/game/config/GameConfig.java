@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
@@ -89,6 +90,8 @@ public class GameConfig {
 
 	private BluetoothLeService bluetoothLeService;
 
+	private boolean host;
+
 	/**
 	 * this specifies the minimum number of players required for a legal game.
 	 * For example, tic-tac-toe would have a minimum (and maximum, see below) of
@@ -138,7 +141,7 @@ public class GameConfig {
 	 * @param portNum
 	 */
 	public GameConfig(ArrayList<GamePlayerType> availTypes, int minPlayers,
-					  int maxPlayers, String gameName, int portNum, GattServer gattServer, BluetoothLeService bluetoothLeService) {
+					  int maxPlayers, String gameName, int portNum, final BluetoothSocket bluetoothSocket, BluetoothLeService bluetoothLeService, boolean host) {
 		
 		// create an array to hold the available player types, including
 		// the "WiFi Player" and the "Bluetooth Player" that will be added
@@ -160,12 +163,13 @@ public class GameConfig {
 			public GamePlayer createPlayer(String name) {
 				GattServer gattServer = getGattServer();
 				BluetoothLeService bluetoothLeService = getBluetoothLeService();
-				return new BluetoothPlayer(gattServer, bluetoothLeService);
+				boolean host = getHost();
+				return new BluetoothPlayer(bluetoothSocket, bluetoothLeService, host);
 			}
 		};
 		
 		// perform the initialization of the object
-		initGameConfig(availArray, minPlayers, maxPlayers, gameName, portNum, gattServer, bluetoothLeService);
+		initGameConfig(availArray, minPlayers, maxPlayers, gameName, portNum, gattServer, bluetoothLeService, host);
 		
 	}// constructor
 
@@ -175,7 +179,7 @@ public class GameConfig {
 	 * 		the copy of the config
 	 */
 	public GameConfig copyWithoutPlayers() {
-		return new GameConfig(availTypes, minPlayers, maxPlayers, gameName, portNum, gattServer, bluetoothLeService);
+		return new GameConfig(availTypes, minPlayers, maxPlayers, gameName, portNum, gattServer, bluetoothLeService, host);
 	}// copyWithoutPlayers
 	
 	/**
@@ -195,14 +199,14 @@ public class GameConfig {
 	 * 		the port number used by this game for connecting over the network
 	 */
 	private GameConfig(GamePlayerType[] availTypes, int minPlayers,
-			int maxPlayers, String gameName, int portNum, GattServer gattServer, BluetoothLeService bluetoothLeService) {
+			int maxPlayers, String gameName, int portNum, GattServer gattServer, BluetoothLeService bluetoothLeService, boolean host) {
 		
 		// perform the initialization of the object
-		initGameConfig(availTypes, minPlayers, maxPlayers, gameName, portNum, gattServer, bluetoothLeService);
+		initGameConfig(availTypes, minPlayers, maxPlayers, gameName, portNum, gattServer, bluetoothLeService, host);
 	}
 	
 	private void initGameConfig(GamePlayerType[] availTypes, int minPlayers,
-			int maxPlayers, String gameName, int portNum, GattServer gattServer, BluetoothLeService bluetoothLeService) {
+			int maxPlayers, String gameName, int portNum, GattServer gattServer, BluetoothLeService bluetoothLeService, boolean host) {
 		
 		// initialize the instance variables from the parameters
 		this.availTypes = availTypes;
@@ -212,6 +216,7 @@ public class GameConfig {
 		this.portNum = portNum;
 		this.gattServer = gattServer;
 		this.bluetoothLeService = bluetoothLeService;
+		this.host = host;
 
 		// default to a local game
 		this.isLocal = true;
@@ -483,6 +488,10 @@ public class GameConfig {
 
 	public BluetoothLeService getBluetoothLeService(){
 		return bluetoothLeService;
+	}
+
+	public boolean getHost(){
+		return host;
 	}
 
 	/**

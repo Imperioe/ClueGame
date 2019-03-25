@@ -1,5 +1,6 @@
 package edu.up.cs301.game;
 
+import android.bluetooth.BluetoothSocket;
 import android.nfc.Tag;
 import android.util.Log;
 
@@ -24,7 +25,7 @@ public class BluetoothPlayer implements GamePlayer  {
      *
      * 		the port number through which we connect to our client
      */
-    public BluetoothPlayer(GattServer gattServer, BluetoothLeService bluetoothLeService) { //TODO: Maybe indicate which tablet
+    public BluetoothPlayer(BluetoothSocket bluetoothSocket, BluetoothLeService bluetoothLeService, boolean host) { //TODO: Maybe indicate which tablet
 
         Log.i(TAG, "creating Bluetooth Player");
 
@@ -34,7 +35,7 @@ public class BluetoothPlayer implements GamePlayer  {
 
         // create our network-connection object, connecting as a server
         bluetoothPasser =
-                new BluetoothPasser(gattServer, bluetoothLeService) { //TODO: Maybe indicate which table
+                new BluetoothPasser(bluetoothSocket, bluetoothLeService, host) { //TODO: Maybe indicate which table
 
                     // callback method, called whenever we receive an object
                     // that has come across the network

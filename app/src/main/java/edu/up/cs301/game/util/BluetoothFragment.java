@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothSocket;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
@@ -26,9 +27,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import edu.up.cs301.game.R;
 
@@ -57,6 +60,7 @@ public class BluetoothFragment extends ListFragment {
     private BluetoothLeService mBluetoothLeService;
     private String mDeviceAddress;
     private boolean mConnected = false;
+    private ConnectThread connectThread;
     //UUID SERVICE_UUID = new UUID((0x0000000000001000L | ((0x180D & 0xFFFFFFFF) << 32)),0x800000805f9b34fbL);
     //private final String LIST_NAME = "NAME";
     //private final String LIST_UUID = "UUID";
@@ -78,15 +82,6 @@ public class BluetoothFragment extends ListFragment {
         //getActionBar().setTitle(R.string.title_devices);
         mHandler = new Handler();
 
-        /*TODO: If still works remove
-        // Use this check to determine whether BLE is supported on the device.  Then you can
-        // selectively disable BLE-related features.
-        if (!getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            Toast.makeText(getActivity(), R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
-            getActivity().finish();
-        }
-        */
-
         // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
         // BluetoothAdapter through BluetoothManager.
         final BluetoothManager bluetoothManager =
@@ -106,71 +101,6 @@ public class BluetoothFragment extends ListFragment {
         mLeDeviceListAdapter = new BluetoothFragment.LeDeviceListAdapter();
         setListAdapter(mLeDeviceListAdapter);
     }
-
-    //region Commented Out
-    /*public boolean onCreateOptionsMenu(Menu menu) {
-        getActivity().getMenuInflater().inflate(R.menu.bluetooth_main, menu);
-        if (!mScanning) {
-            menu.findItem(R.id.menu_stop).setVisible(false);
-            menu.findItem(R.id.menu_scan).setVisible(true);
-            menu.findItem(R.id.menu_refresh).setActionView(null);
-        } else {
-            menu.findItem(R.id.menu_stop).setVisible(true);
-            menu.findItem(R.id.menu_scan).setVisible(false);
-            menu.findItem(R.id.menu_refresh).setActionView(
-                    R.layout.actionbar_indeterminate_progress);
-        }
-        return true;
-    }*/
-
-    /*@Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_scan:
-                mLeDeviceListAdapter.clear();
-                scanLeDevice(true);
-                break;
-            case R.id.menu_stop:
-                scanLeDevice(false);
-                break;
-        }
-        return true;
-    }*/
-
-    /*@Override
-    public void onResume() {
-        super.onResume();
-        // Ensures Bluetooth is enabled on the device.  If Bluetooth is not currently enabled,
-        // fire an intent to display a dialog asking the user to grant permission to enable it.
-        if (!mBluetoothAdapter.isEnabled()) {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-        }
-        // Initializes list view adapter.
-        mLeDeviceListAdapter = new BluetoothFragment.LeDeviceListAdapter();
-        setListAdapter(mLeDeviceListAdapter);
-        scanLeDevice(true);
-    }*/
-
-    /*@Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // User chose not to enable Bluetooth.
-        if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
-            getActivity().finish();
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }*/
-
-    /*@Override
-    public void onPause() {
-        super.onPause();
-        scanLeDevice(false);
-        mLeDeviceListAdapter.clear();
-    }*/
-    //endregion
 
     // Code to manage Service lifecycle.
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -306,11 +236,17 @@ public class BluetoothFragment extends ListFragment {
             mScanning = false;
         }
         if(!mConnected) {
+            //TODO: Make this RFCOMM
+            connectThread = new ConnectThread(device);
+            connectThread.start();
+            new BluetoothService(connectThread.mmSocket).write("Hello Bluetooth".getBytes());
+            //This is where GATT connection starts
+
             //startActivity(intent);
-            Intent gattServiceIntent = new Intent(this.getActivity(), BluetoothLeService.class);
-            mDeviceAddress = device.getAddress(); //might be able to remove
-            getActivity().bindService(gattServiceIntent, mServiceConnection, this.getActivity().BIND_AUTO_CREATE);
-            getActivity().registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+            //Intent gattServiceIntent = new Intent(this.getActivity(), BluetoothLeService.class);
+            //mDeviceAddress = device.getAddress(); //might be able to remove
+            //getActivity().bindService(gattServiceIntent, mServiceConnection, this.getActivity().BIND_AUTO_CREATE);
+            //getActivity().registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         }
     }
 
@@ -455,5 +391,64 @@ public class BluetoothFragment extends ListFragment {
 
     public BluetoothLeService getBluetoothLeService(){
         return mBluetoothLeService;
+    }
+
+    public BluetoothSocket getSocket(){
+        return connectThread.mmSocket;
+    }
+
+    //This class connects the Client Device to the open RFCOMM Server on the host tablet
+    private class ConnectThread extends Thread {
+        private final BluetoothSocket mmSocket;
+        private final BluetoothDevice mmDevice;
+
+        public ConnectThread(BluetoothDevice device) {
+            // Use a temporary object that is later assigned to mmSocket
+            // because mmSocket is final.
+            BluetoothSocket tmp = null;
+            mmDevice = device;
+
+            try {
+                // Get a BluetoothSocket to connect with the given BluetoothDevice.
+                // MY_UUID is the app's UUID string, also used in the server code.
+                tmp = device.createRfcommSocketToServiceRecord(UUID.fromString("00009999-0000-1000-8000-00805f9b34fb"));
+            } catch (IOException e) {
+                Log.e(TAG, "Socket's create() method failed", e);
+            }
+            mmSocket = tmp;
+        }
+
+        public void run() {
+            // Cancel discovery because it otherwise slows down the connection.
+            mBluetoothAdapter.cancelDiscovery();
+
+            try {
+                // Connect to the remote device through the socket. This call blocks
+                // until it succeeds or throws an exception.
+                mmSocket.connect();
+            } catch (IOException connectException) {
+                // Unable to connect; close the socket and return.
+                try {
+                    mmSocket.close();
+                } catch (IOException closeException) {
+                    Log.e(TAG, "Could not close the client socket", closeException);
+                }
+                return;
+            }
+
+            // The connection attempt succeeded. Perform work associated with
+            // the connection in a separate thread.
+            //manageMyConnectedSocket(mmSocket);
+            //TODO: What else needs done
+        }
+
+        // Closes the client socket and causes the thread to finish.
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Could not close the client socket", e);
+            }
+        }
     }
 }

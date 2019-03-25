@@ -1,5 +1,6 @@
 package edu.up.cs301.game;
 
+import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 import java.util.LinkedList;
@@ -30,9 +31,9 @@ public class BluetoothGame implements Game {
      *
      * @return
      */
-    public static BluetoothGame create(GattServer gattServer, BluetoothLeService bluetoothLeService) {
+    public static BluetoothGame create(BluetoothSocket bluetoothSocket, BluetoothLeService bluetoothLeService, boolean host) {
         // create the game object
-        BluetoothGame rtnVal = new BluetoothGame(gattServer, bluetoothLeService);
+        BluetoothGame rtnVal = new BluetoothGame(bluetoothSocket, bluetoothLeService, host);
 
         // see if a connection becomes established; if so, return
         // the object, otherwise null
@@ -46,11 +47,11 @@ public class BluetoothGame implements Game {
     }
 
     //BluetoothGame Constructor (Private)
-    private BluetoothGame(GattServer gattServer, BluetoothLeService bluetoothLeService){
+    private BluetoothGame(BluetoothSocket bluetoothSocket, BluetoothLeService bluetoothLeService, boolean host){
 
         player = null;
 
-        bluetoothPasser = new BluetoothPasser(gattServer, bluetoothLeService){
+        bluetoothPasser = new BluetoothPasser(bluetoothSocket, bluetoothLeService, host){
             // callback method, called whenever an object is sent to us from
             // across bluetooth
             public void onReceiveObject(Object obj) {
