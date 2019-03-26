@@ -43,6 +43,9 @@ public class RFCOMMServer {
             return false;
         }
 
+        //Other Device knows what device to connect to
+        startAdvertising();
+        //Start the server to connect to
         acceptThread = (new AcceptThread());
         acceptThread.start();
         return true;
@@ -56,6 +59,7 @@ public class RFCOMMServer {
         acceptThread.cancel();
     }
 
+    //Needs to tell the other device it exists
     private void startAdvertising() {
         BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
         mBluetoothLeAdvertiser = bluetoothAdapter.getBluetoothLeAdvertiser();

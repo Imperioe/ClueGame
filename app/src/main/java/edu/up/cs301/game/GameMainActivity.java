@@ -201,7 +201,7 @@ View.OnClickListener {
 		//	return;
 		//}
 
-		//Starting RFCOMM Server
+		//Starting Advertising and RFCOMM Server
 		rfcommserver = new RFCOMMServer();
 		if(!rfcommserver.startRFCOMMServer(getApplicationContext())){
 			return;

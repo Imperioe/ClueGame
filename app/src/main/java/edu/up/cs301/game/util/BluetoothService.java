@@ -26,6 +26,7 @@ public class BluetoothService {
     }
 
     public BluetoothService(BluetoothSocket socket){
+        Log.i(TAG, "Starting new Bluetooth Service");
         connectedThread = new ConnectedThread(socket);
         connectedThread.start();
     }
@@ -60,6 +61,11 @@ public class BluetoothService {
 
             mmInStream = tmpIn;
             mmOutStream = tmpOut;
+            if(mmInStream != null && mmOutStream != null) {
+                Log.i(TAG, "Streams Successfully created");
+            }else{
+                Log.e(TAG, "Streams Failed to be created");
+            }
         }
 
         public void run() {
@@ -69,8 +75,15 @@ public class BluetoothService {
             // Keep listening to the InputStream until an exception occurs.
             while (true) {
                 try {
-                    // Read from the InputStream.
-                    numBytes = mmInStream.read(mmBuffer);
+                    //Ensure the Instream is not null before reading data
+                    if(mmInStream != null){
+                        // Read from the InputStream.
+                        numBytes = mmInStream.read(mmBuffer);
+                    }else{
+                        Log.e(TAG, "Instream is null");
+                        continue;
+                    }
+
                     // Send the obtained bytes to the UI activity.
                     Message readMsg = handler.obtainMessage(
                             MessageConstants.MESSAGE_READ, numBytes, -1,
@@ -87,7 +100,14 @@ public class BluetoothService {
         // Call this from the main activity to send data to the remote device.
         public void write(byte[] bytes) {
             try {
-                mmOutStream.write(bytes);
+                //Ensure outstream is not null before sending data
+                if(mmOutStream != null) {
+                    mmOutStream.write(bytes);
+                    Log.i(TAG, "Message Written to Outstream");
+                }else{
+                    Log.e(TAG, "Outstream is null");
+                }
+
 
                 // Share the sent message with the UI activity.
                 Message writtenMsg = handler.obtainMessage(

@@ -28,6 +28,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -237,9 +239,18 @@ public class BluetoothFragment extends ListFragment {
         }
         if(!mConnected) {
             //TODO: Make this RFCOMM
+            Log.i(TAG, "connecting");
             connectThread = new ConnectThread(device);
             connectThread.start();
-            new BluetoothService(connectThread.mmSocket).write("Hello Bluetooth".getBytes());
+            while(!connectThread.getConnected()){
+                Thread.yield();
+            }
+            Log.i(TAG, "Making Service");
+            //BluetoothService bs = new BluetoothService(connectThread.mmSocket);
+            //Log.i(TAG, "Sending Hello Message");
+            //bs.write("Hello Bluetooth".getBytes());
+            //Log.i(TAG, "Done");
+
             //This is where GATT connection starts
 
             //startActivity(intent);
@@ -399,8 +410,9 @@ public class BluetoothFragment extends ListFragment {
 
     //This class connects the Client Device to the open RFCOMM Server on the host tablet
     private class ConnectThread extends Thread {
-        private final BluetoothSocket mmSocket;
+        private BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
+        private boolean connected;
 
         public ConnectThread(BluetoothDevice device) {
             // Use a temporary object that is later assigned to mmSocket
@@ -425,11 +437,21 @@ public class BluetoothFragment extends ListFragment {
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
+                Log.i(TAG, "Connecting to Bluetooth Host");
                 mmSocket.connect();
+                Log.i(TAG, "Connected to Bluetooth Host");
             } catch (IOException connectException) {
+                try {
+                    //TODO: This is still failing
+                    BluetoothSocket socket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(mmDevice, 1);
+                    socket.connect();
+                }catch (Exception e){
+                    Log.e(TAG, e.getMessage());
+                }
                 // Unable to connect; close the socket and return.
                 try {
                     mmSocket.close();
+                    Log.i(TAG, connectException.toString());
                 } catch (IOException closeException) {
                     Log.e(TAG, "Could not close the client socket", closeException);
                 }
@@ -440,6 +462,10 @@ public class BluetoothFragment extends ListFragment {
             // the connection in a separate thread.
             //manageMyConnectedSocket(mmSocket);
             //TODO: What else needs done
+        }
+
+        public boolean getConnected(){
+            return connected;
         }
 
         // Closes the client socket and causes the thread to finish.
