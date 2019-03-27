@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothSocket;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -18,6 +19,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -383,8 +385,9 @@ public class BluetoothFragment extends ListFragment {
                         BluetoothDevice device = res.getDevice();
                         //@Override
                         public void run() {
-                            //TODO: Check for game name match
-                            if(device.getName() != null && device.getName().contains("Tablet")) {
+                            ScanRecord sr = res.getScanRecord();
+                            if (device.getName() != null && sr != null
+                                        && new String(sr.getBytes()).contains(getResources().getString(R.string.app_name))) {
                                 //Log.i("Device Found", new String(scanRecord));
                                 mLeDeviceListAdapter.addDevice(device);
                                 mLeDeviceListAdapter.notifyDataSetChanged();
@@ -434,29 +437,26 @@ public class BluetoothFragment extends ListFragment {
             // Cancel discovery because it otherwise slows down the connection.
             mBluetoothAdapter.cancelDiscovery();
 
+            Log.i(TAG, "Connecting to Bluetooth Host");
             try {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
-                Log.i(TAG, "Connecting to Bluetooth Host");
-                mmSocket.connect();
-                Log.i(TAG, "Connected to Bluetooth Host");
-            } catch (IOException connectException) {
+                //Utilizes back up socket mPort is set to -1 and need to be 2
+                //TODO: This is still failing
+                BluetoothSocket socket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(mmDevice, Integer.valueOf(2));
+                socket.connect();
+            }catch (Exception e){
+                Log.e(TAG, e.getMessage());
+                //Try again
                 try {
-                    //TODO: This is still failing
-                    BluetoothSocket socket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(mmDevice, 1);
+                    BluetoothSocket socket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(mmDevice, Integer.valueOf(2));
                     socket.connect();
-                }catch (Exception e){
-                    Log.e(TAG, e.getMessage());
+                }catch(Exception e2){
+                    Log.e(TAG, e2.getMessage());
+                    return;
                 }
-                // Unable to connect; close the socket and return.
-                try {
-                    mmSocket.close();
-                    Log.i(TAG, connectException.toString());
-                } catch (IOException closeException) {
-                    Log.e(TAG, "Could not close the client socket", closeException);
-                }
-                return;
             }
+            Log.i(TAG, "Connected to Bluetooth Host");
 
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.

@@ -42,7 +42,8 @@ really need to.-->
     <string name="Max_Player_Error_Msg">Sorry, adding another player would exceed the maximum allowed."</string>
 
     <!-- Bluetooth Strings -->
-    <string name="ble_not_supported">BLE Not Supported</string>
+    <string name="bt_not_supported">Bluetooth Not Supported</string>
+    <string name="bt_supported">Bluetooth Supported</string>
 
     <!--BLE Menu Items-->
     <string name="title_devices">BLE Device Scan</string>

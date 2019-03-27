@@ -185,15 +185,15 @@ View.OnClickListener {
 
 		//Checks if the device placed on has BLE support then
 		//BLE-related features can be selectively disabled.
-		if (!getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_BLUETOOTH_LE)) {
-			Log.i(TAG+":Start", "BLE Not Supported");
-			Toast.makeText(this, R.string.ble_not_supported, Toast.LENGTH_SHORT).show();
+		if (!getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_BLUETOOTH)) {
+			Log.i(TAG+":Start", getResources().getString(R.string.bt_not_supported));
+			Toast.makeText(this, R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
 			//finish();
 			//This application runs using a BLE connection
 			return;
 		}else {
 			//BLE features are supported
-			Log.i(TAG+":Start", "BLE Supported");
+			Log.i(TAG+":Start", getResources().getString(R.string.bt_supported));
 		}
 
 		//gattServer = new GattServer();

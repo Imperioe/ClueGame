@@ -47,6 +47,7 @@ public class RFCOMMServer {
         startAdvertising();
         //Start the server to connect to
         acceptThread = (new AcceptThread());
+        Log.i(TAG, "Starting Accept Thread");
         acceptThread.start();
         return true;
     }
@@ -76,8 +77,8 @@ public class RFCOMMServer {
                 .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_MEDIUM)
                 .build();
 
-        //TODO: Check This Make this get displayed on the other tablet
-        ParcelUuid p = new ParcelUuid(UUID.fromString("4e414d45-0000-1000-8000-00805f9b34fb"));//GameAdvertisingProfile.NAME_SERVICE);
+        //Other side indirectly accesses this
+        ParcelUuid p = new ParcelUuid(UUID.fromString("4e414d45-0000-1000-8000-00805f9b34fb"));
         AdvertiseData data = new AdvertiseData.Builder()
                 .setIncludeDeviceName(true)
                 .setIncludeTxPowerLevel(false)
@@ -114,6 +115,7 @@ public class RFCOMMServer {
             try {
                 // MY_UUID is the app's UUID string, also used by the client code.
                 tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(context.getString(R.string.app_name), UUID.fromString("00009999-0000-1000-8000-00805f9b34fb"));
+                Log.i(TAG, "Socket's listen() was successful");
             } catch (IOException e) {
                 Log.e(TAG, "Socket's listen() method failed", e);
             }
@@ -121,11 +123,13 @@ public class RFCOMMServer {
         }
 
         public void run() {
+            Log.i(TAG, "Running Accept");
             BluetoothSocket socket = null;
             // Keep listening until exception occurs or a socket is returned.
             while (true) {
                 try {
                     socket = mmServerSocket.accept();
+                    Log.i(TAG, "Socket was accepted");
                 } catch (IOException e) {
                     Log.e(TAG, "Socket's accept() method failed", e);
                     break;
