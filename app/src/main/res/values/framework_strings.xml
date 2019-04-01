@@ -49,6 +49,7 @@ really need to.-->
     <string name="title_devices">BLE Device Scan</string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
     <string name="connected">Connected</string>
+    <string name="connecting">Connecting..</string>
     <string name="disconnected">Disconnected</string>
     <string name="no_data">No data</string>
     <string name="unknown_characteristic">Unknown characteristic</string>
@@ -65,4 +66,6 @@ really need to.-->
     <string name="menu_stop">Stop</string>
     <string name="bluetooth_list">Bluetooth Games</string>
     <string name="BluetoothScan">Scan</string>
+    <string name="discoverable">Make discoverable</string>
+    <string name="secure_connect">Connect a device</string>
 </resources>

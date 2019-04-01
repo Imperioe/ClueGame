@@ -16,14 +16,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.ParcelUuid;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,11 +53,18 @@ public class BluetoothFragment extends ListFragment {
     //Bluetooth API
     private BluetoothFragment.LeDeviceListAdapter mLeDeviceListAdapter;
     private BluetoothAdapter mBluetoothAdapter;
-    private ArrayList<ArrayList<BluetoothGattCharacteristic>> mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
-    private boolean mScanning;
-    private Handler mHandler;
 
-    //private static final int REQUEST_ENABLE_BT = 1;
+
+    //TODO: Delete unused
+    private boolean mScanning;
+
+    private static final int REQUEST_ENABLE_BT = 3;
+
+    /**
+     * Member object for the Game services
+     */
+    public BluetoothGameService mGameService = null;
+
 
     // Stops scanning after 10 seconds.
     private static final long SCAN_PERIOD = 10000;
@@ -64,7 +75,8 @@ public class BluetoothFragment extends ListFragment {
     private BluetoothLeService mBluetoothLeService;
     private String mDeviceAddress;
     private boolean mConnected = false;
-    private ConnectThread connectThread;
+    private Handler mHandler;
+    //public RFCOMMServer rfcommServer;
     //UUID SERVICE_UUID = new UUID((0x0000000000001000L | ((0x180D & 0xFFFFFFFF) << 32)),0x800000805f9b34fbL);
     //private final String LIST_NAME = "NAME";
     //private final String LIST_UUID = "UUID";
@@ -86,13 +98,15 @@ public class BluetoothFragment extends ListFragment {
         //getActionBar().setTitle(R.string.title_devices);
         mHandler = new Handler();
 
-        // Initializes a Bluetooth adapter.  For API level 18 and above, get a reference to
-        // BluetoothAdapter through BluetoothManager.
-        final BluetoothManager bluetoothManager =
-                (BluetoothManager) getActivity().getSystemService(Context.BLUETOOTH_SERVICE);
-        if(bluetoothManager != null) {
-            mBluetoothAdapter = bluetoothManager.getAdapter();
-        }
+        // Register for broadcasts when a device is discovered
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        getActivity().registerReceiver(mReceiver, filter);
+
+        // Register for broadcasts when discovery has finished
+        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        getActivity().registerReceiver(mReceiver, filter);
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Checks if Bluetooth is supported on the device.
         if (mBluetoothAdapter == null) {
@@ -106,119 +120,19 @@ public class BluetoothFragment extends ListFragment {
         setListAdapter(mLeDeviceListAdapter);
     }
 
-    // Code to manage Service lifecycle.
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        //@Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
-            if (!mBluetoothLeService.initialize()) {
-                Log.e("", "Unable to initialize Bluetooth");
-                getActivity().finish();
-            }
-            // Automatically connects to the device upon successful start-up initialization.
-            mBluetoothLeService.connect(mDeviceAddress);
+    @Override
+    public void onStart(){
+        super.onStart();
+        // If BT is not on, request that it be enabled.
+        // setupChat() will then be called during onActivityResult
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        } else if (mGameService == null) {
+            setupGame();
         }
-
-        //@Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mBluetoothLeService = null;
-        }
-    };
-
-    // Handles various events fired by the Service.
-    // ACTION_GATT_CONNECTED: connected to a GATT server.
-    // ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
-    // ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
-    // ACTION_DATA_AVAILABLE: received data from the device.  This can be a result of read
-    //                        or notification operations.
-    private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (ACTION_GATT_CONNECTED.equals(action)) {
-                mConnected = true;
-                Log.i(TAG,"Connected to GATT");
-                updateConnectionState(R.string.connected);
-                //invalidateOptionsMenu();
-            } else if (ACTION_GATT_DISCONNECTED.equals(action)) {
-                mConnected = false;
-                Log.i(TAG,"Disconnected from GATT");
-                updateConnectionState(R.string.disconnected);
-                //invalidateOptionsMenu();
-                //clearUI();
-            } else if (ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                // Show all the supported services and characteristics on the user interface.
-                displayGattServices(mBluetoothLeService.getSupportedGattServices());
-            } else if (ACTION_DATA_AVAILABLE.equals(action)) {
-                Log.i(TAG,intent.getDataString());
-                //TODO: May need to add code here
-                //displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
-            }
-        }
-    };
-
-    // Demonstrates how to iterate through the supported GATT Services/Characteristics.
-    // In this sample, we populate the data structure that is bound to the ExpandableListView
-    // on the UI.
-    private void displayGattServices(List<BluetoothGattService> gattServices) {
-        if (gattServices == null) return;
-        String uuid = null;
-        String unknownServiceString = getResources().getString(R.string.unknown_service);
-        String unknownCharaString = getResources().getString(R.string.unknown_characteristic);
-        ArrayList<HashMap<String, String>> gattServiceData = new ArrayList<HashMap<String, String>>();
-        ArrayList<ArrayList<HashMap<String, String>>> gattCharacteristicData
-                = new ArrayList<ArrayList<HashMap<String, String>>>();
-        mGattCharacteristics = new ArrayList<ArrayList<BluetoothGattCharacteristic>>();
-
-        //region Hidden
-        //Loops through available GATT Services.
-        /*for (BluetoothGattService gattService : gattServices) {
-            HashMap<String, String> currentServiceData = new HashMap<String, String>();
-            uuid = gattService.getUuid().toString();
-            currentServiceData.put(
-                    LIST_NAME, SampleGattAttributes.lookup(uuid, unknownServiceString));
-            currentServiceData.put(LIST_UUID, uuid);
-            gattServiceData.add(currentServiceData);
-            ArrayList<HashMap<String, String>> gattCharacteristicGroupData =
-                    new ArrayList<HashMap<String, String>>();
-            List<BluetoothGattCharacteristic> gattCharacteristics =
-                    gattService.getCharacteristics();
-            ArrayList<BluetoothGattCharacteristic> charas =
-                    new ArrayList<BluetoothGattCharacteristic>();
-            // Loops through available Characteristics.
-            for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
-                charas.add(gattCharacteristic);
-                HashMap<String, String> currentCharaData = new HashMap<String, String>();
-                uuid = gattCharacteristic.getUuid().toString();
-                currentCharaData.put(
-                        LIST_NAME, SampleGattAttributes.lookup(uuid, unknownCharaString));
-                currentCharaData.put(LIST_UUID, uuid);
-                gattCharacteristicGroupData.add(currentCharaData);
-            }
-            mGattCharacteristics.add(charas);
-            gattCharacteristicData.add(gattCharacteristicGroupData);
-        }
-        SimpleExpandableListAdapter gattServiceAdapter = new SimpleExpandableListAdapter(
-                getActivity(),
-                gattServiceData,
-                android.R.layout.simple_expandable_list_item_2,
-                new String[] {LIST_NAME, LIST_UUID},
-                new int[] { android.R.id.text1, android.R.id.text2 },
-                gattCharacteristicData,
-                android.R.layout.simple_expandable_list_item_2,
-                new String[] {LIST_NAME, LIST_UUID},
-                new int[] { android.R.id.text1, android.R.id.text2 }
-        );
-        Log.i("Gatt Services", gattServiceAdapter.getChild(0,0).toString());
-        //mGattServicesList.setAdapter(gattServiceAdapter);*/
-        //endregion
-
-        //Trying to send data across Gatt
-        //BluetoothGattService bgs = gattServices.add(new BluetoothGattService(Service_UUID,));
-
     }
-
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -241,26 +155,63 @@ public class BluetoothFragment extends ListFragment {
         }
         if(!mConnected) {
             //TODO: Make this RFCOMM
-            Log.i(TAG, "connecting");
-            connectThread = new ConnectThread(device);
-            connectThread.start();
-            while(!connectThread.getConnected()){
+            Log.i(TAG, "starting");
+            while(mGameService == null) {
+                Log.i(TAG, "Game Service is Null");
                 Thread.yield();
             }
-            Log.i(TAG, "Making Service");
+            while(mGameService.getState() != mGameService.STATE_LISTEN){
+                Thread.yield();
+            }
+            Log.i(TAG, "Connecting");
+            mGameService.connect(device, true);
+            while(mGameService.getState() != mGameService.STATE_CONNECTED){
+                Thread.yield();
+            }
+            Log.i(TAG, "Connected");
             //BluetoothService bs = new BluetoothService(connectThread.mmSocket);
             //Log.i(TAG, "Sending Hello Message");
             //bs.write("Hello Bluetooth".getBytes());
             //Log.i(TAG, "Done");
 
             //This is where GATT connection starts
-
             //startActivity(intent);
             //Intent gattServiceIntent = new Intent(this.getActivity(), BluetoothLeService.class);
             //mDeviceAddress = device.getAddress(); //might be able to remove
             //getActivity().bindService(gattServiceIntent, mServiceConnection, this.getActivity().BIND_AUTO_CREATE);
             //getActivity().registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         }
+    }
+
+    private void setupGame(){
+        Log.i(TAG, "Setting Up Game Service");
+
+        mGameService = new BluetoothGameService(getActivity(), bluetoothHandler);
+
+    }
+
+    /**
+     * Makes this device discoverable for 300 seconds (5 minutes).
+     */
+    public void ensureDiscoverable() {
+        //BluetoothAdapter.getDefaultAdapter().setName("ClueGameHost");
+        if (mBluetoothAdapter.getScanMode() !=
+                BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+        }
+        // If BT is not on, request that it be enabled.
+        // setupChat() will then be called during onActivityResult
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            // Otherwise, setup the chat session
+        } else if (mGameService == null) {
+            setupGame();
+        }
+
+        mGameService.start();
     }
 
     private void updateConnectionState(final int resourceId) {
@@ -273,13 +224,25 @@ public class BluetoothFragment extends ListFragment {
         });
     }
 
-    private static IntentFilter makeGattUpdateIntentFilter() {
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_GATT_CONNECTED);
-        intentFilter.addAction(ACTION_GATT_DISCONNECTED);
-        intentFilter.addAction(ACTION_GATT_SERVICES_DISCOVERED);
-        intentFilter.addAction(ACTION_DATA_AVAILABLE);
-        return intentFilter;
+    public void scan(){
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
+        mLeDeviceListAdapter.clear();
+
+        // Stops scanning after a pre-defined scan period.
+        mHandler.postDelayed(new Runnable() {
+            //@Override
+            public void run() {
+                mScanning = false;
+                mBluetoothAdapter.cancelDiscovery();
+                //invalidateOptionsMenu();
+            }
+        }, SCAN_PERIOD);
+
+        mScanning = true;
+        mBluetoothAdapter.startDiscovery();
     }
 
     public void scanLeDevice(final boolean enable) {
@@ -374,6 +337,35 @@ public class BluetoothFragment extends ListFragment {
         }
     }
 
+    /**
+     * The BroadcastReceiver that listens for discovered devices and changes the title when
+     * discovery is finished
+     */
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            // When discovery finds a device
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Log.i(TAG, device.getAddress()); //B0:6E:BF:19:b8:af
+                // If it's already paired, skip it, because it's been listed already
+                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    //TODO: Game Name
+                    if (device.getName() != null && device.getName().contains("Tablet")) {
+                        //Log.i("Device Found", new String(scanRecord));
+                        mLeDeviceListAdapter.addDevice(device);
+                        mLeDeviceListAdapter.notifyDataSetChanged();
+                    }
+                    //mNewDevicesArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+                }
+                // When discovery is finished, change the Activity title
+            }
+        }
+    };
+
     // Device scan callback.
     private ScanCallback mLeScanCallback =
             new ScanCallback() {
@@ -407,74 +399,55 @@ public class BluetoothFragment extends ListFragment {
         return mBluetoothLeService;
     }
 
-    public BluetoothSocket getSocket(){
-        return connectThread.mmSocket;
-    }
-
-    //This class connects the Client Device to the open RFCOMM Server on the host tablet
-    private class ConnectThread extends Thread {
-        private BluetoothSocket mmSocket;
-        private final BluetoothDevice mmDevice;
-        private boolean connected;
-
-        public ConnectThread(BluetoothDevice device) {
-            // Use a temporary object that is later assigned to mmSocket
-            // because mmSocket is final.
-            BluetoothSocket tmp = null;
-            mmDevice = device;
-
-            try {
-                // Get a BluetoothSocket to connect with the given BluetoothDevice.
-                // MY_UUID is the app's UUID string, also used in the server code.
-                tmp = device.createRfcommSocketToServiceRecord(UUID.fromString("00009999-0000-1000-8000-00805f9b34fb"));
-            } catch (IOException e) {
-                Log.e(TAG, "Socket's create() method failed", e);
-            }
-            mmSocket = tmp;
-        }
-
-        public void run() {
-            // Cancel discovery because it otherwise slows down the connection.
-            mBluetoothAdapter.cancelDiscovery();
-
-            Log.i(TAG, "Connecting to Bluetooth Host");
-            try {
-                // Connect to the remote device through the socket. This call blocks
-                // until it succeeds or throws an exception.
-                //Utilizes back up socket mPort is set to -1 and need to be 2
-                //TODO: This is still failing
-                BluetoothSocket socket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(mmDevice, Integer.valueOf(2));
-                socket.connect();
-            }catch (Exception e){
-                Log.e(TAG, e.getMessage());
-                //Try again
-                try {
-                    BluetoothSocket socket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[]{int.class}).invoke(mmDevice, Integer.valueOf(2));
-                    socket.connect();
-                }catch(Exception e2){
-                    Log.e(TAG, e2.getMessage());
-                    return;
-                }
-            }
-            Log.i(TAG, "Connected to Bluetooth Host");
-
-            // The connection attempt succeeded. Perform work associated with
-            // the connection in a separate thread.
-            //manageMyConnectedSocket(mmSocket);
-            //TODO: What else needs done
-        }
-
-        public boolean getConnected(){
-            return connected;
-        }
-
-        // Closes the client socket and causes the thread to finish.
-        public void cancel() {
-            try {
-                mmSocket.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Could not close the client socket", e);
+    /**
+     * The Handler that gets information back from the BluetoothGameService
+     */
+    public final Handler bluetoothHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Constants.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothGameService.STATE_CONNECTED:
+                            updateConnectionState(R.string.connected);
+                            //mConversationArrayAdapter.clear();
+                            break;
+                        case BluetoothGameService.STATE_CONNECTING:
+                            updateConnectionState(R.string.connecting);
+                            break;
+                        case BluetoothGameService.STATE_LISTEN:
+                        case BluetoothGameService.STATE_NONE:
+                            updateConnectionState(R.string.disconnected);
+                            break;
+                    }
+                    break;
+                case Constants.MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    //mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    break;
+                case Constants.MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    //mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    break;
+                case Constants.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    //mConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    //if (null != activity) {
+                    //    Toast.makeText(activity, "Connected to "
+                    //            + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    //}
+                    break;
+                case Constants.MESSAGE_TOAST:
+                    //if (null != activity) {
+                    //    Toast.makeText(activity, msg.getData().getString(Constants.TOAST),
+                    //            Toast.LENGTH_SHORT).show();
+                    //}
+                    break;
             }
         }
-    }
+    };
 }

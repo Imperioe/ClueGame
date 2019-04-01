@@ -141,7 +141,7 @@ public class GameConfig {
 	 * @param portNum
 	 */
 	public GameConfig(ArrayList<GamePlayerType> availTypes, int minPlayers,
-					  int maxPlayers, String gameName, int portNum, final BluetoothSocket bluetoothSocket, BluetoothLeService bluetoothLeService, boolean host) {
+					  int maxPlayers, String gameName, int portNum, /*final BluetoothSocket bluetoothSocket,*/ BluetoothLeService bluetoothLeService, boolean host) {
 		
 		// create an array to hold the available player types, including
 		// the "WiFi Player" and the "Bluetooth Player" that will be added
@@ -164,7 +164,7 @@ public class GameConfig {
 				GattServer gattServer = getGattServer();
 				BluetoothLeService bluetoothLeService = getBluetoothLeService();
 				boolean host = getHost();
-				return new BluetoothPlayer(bluetoothSocket, bluetoothLeService, host);
+				return new BluetoothPlayer(/*bluetoothSocket,*/ bluetoothLeService, host);
 			}
 		};
 		

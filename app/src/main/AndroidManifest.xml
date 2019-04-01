@@ -2,19 +2,19 @@
     package="edu.up.cs301.game"
     android:versionCode="1"
     android:versionName="1.0" >
+    <!--All permissions for this app need to be enabled-->
 
-    <uses-sdk android:targetSdkVersion="21" />
-
+    <!-- For Network Play-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!--For Bluetooth Play-->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-
-    <!--//All permissions for this app need to be enabled-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
-    <uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>
+    <!--<uses-feature android:name="android.hardware.bluetooth_le" android:required="false"/>-->
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -29,13 +29,13 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="edu.up.cs301.game.util.DeviceScanActivity"></activity>
+        <!--<activity android:name="edu.up.cs301.game.util.DeviceScanActivity"></activity>
 
         <activity android:name="edu.up.cs301.game.util.DeviceControlActivity"></activity>
 
         <service
             android:name="edu.up.cs301.game.util.BluetoothLeService"
-            android:enabled="true" />
+            android:enabled="true" />-->
 
     </application>
 

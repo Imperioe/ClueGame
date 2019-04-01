@@ -26,7 +26,7 @@ public abstract class BluetoothPasser {
     private Handler sendHandler;
 
     private BluetoothLeService bluetoothLeService;
-    private BluetoothSocket bluetoothSocket;
+    //private BluetoothSocket bluetoothSocket;
     private boolean imHost;
 
     // a queue for collecting objects that "sent" to this object
@@ -34,8 +34,8 @@ public abstract class BluetoothPasser {
     private Queue<Object> objQueue = new LinkedList<Object>();
 
 
-    public BluetoothPasser(BluetoothSocket bluetoothSocket, BluetoothLeService bles, boolean host){
-        this.bluetoothSocket = bluetoothSocket;
+    public BluetoothPasser(/*BluetoothSocket bluetoothSocket,*/ BluetoothLeService bles, boolean host){
+        //this.bluetoothSocket = bluetoothSocket;
         bluetoothLeService = bles;
         imHost = host;
         try {
@@ -104,10 +104,10 @@ public abstract class BluetoothPasser {
         byte[] serialized = bos.toByteArray();
         int packets = serialized.length/20;
         if(imHost){
-            while(bluetoothSocket == null){
+            /*while(bluetoothSocket == null){
                 Log.i(TAG, "Gatt Server is null");
                 Thread.yield();
-            }
+            }*/
             Log.i(TAG, "Writing Bluetooth Packets as Host");
             //gattServer.addToSendingQueue(new QueueObject((packets+"").getBytes(),DataTransferProfile.TRANSFER_DESC01));
             for(int i = 0;i<packets;i++) {

@@ -28,10 +28,12 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -46,6 +48,8 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.TabHost.TabSpec;
 import android.widget.Toast;
+import android.widget.ViewAnimator;
+
 import edu.up.cs301.game.config.GameConfig;
 import edu.up.cs301.game.config.GamePlayerType;
 import edu.up.cs301.game.util.BluetoothFragment;
@@ -114,8 +118,9 @@ View.OnClickListener {
 	//To Connect to the other Bluetooth
 	private TabHost tabHost;
 	private BluetoothFragment fragment;
-	protected RFCOMMServer rfcommserver;
+	//protected RFCOMMServer rfcommserver;
 	protected BluetoothLeService bluetoothLeService;
+	private Handler bluetoothHandler;
 
 
 	/*
@@ -164,8 +169,8 @@ View.OnClickListener {
 		return ProxyGame.create(portNum, hostName);
 	}
 
-	private BluetoothGame createBluetoothGame(BluetoothSocket bluetoothSocket, BluetoothLeService bluetoothLeService, boolean host){
-		return BluetoothGame.create(bluetoothSocket,bluetoothLeService, host);
+	private BluetoothGame createBluetoothGame(/*BluetoothSocket bluetoothSocket,*/ BluetoothLeService bluetoothLeService, boolean host){
+		return BluetoothGame.create(/*bluetoothSocket,*/bluetoothLeService, host);
 	}
 
 	/*
@@ -182,52 +187,18 @@ View.OnClickListener {
 	public final void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-
-		//Checks if the device placed on has BLE support then
-		//BLE-related features can be selectively disabled.
-		if (!getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_BLUETOOTH)) {
-			Log.i(TAG+":Start", getResources().getString(R.string.bt_not_supported));
-			Toast.makeText(this, R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
-			//finish();
-			//This application runs using a BLE connection
-			return;
-		}else {
-			//BLE features are supported
-			Log.i(TAG+":Start", getResources().getString(R.string.bt_supported));
-		}
-
-		//gattServer = new GattServer();
-		//if(!gattServer.startGattServer(getApplicationContext())){
-		//	return;
-		//}
-
-		//Starting Advertising and RFCOMM Server
-		rfcommserver = new RFCOMMServer();
-		if(!rfcommserver.startRFCOMMServer(getApplicationContext())){
-			return;
-		}
-
-		//Making a Fragment for Bluetooth Device List
-		FragmentManager fragmentManager = getFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		fragment = new BluetoothFragment();
-		fragmentTransaction.add(R.id.remoteTabLayout, fragment);
-		fragmentTransaction.commit();
-
-		bluetoothLeService = fragment.getBluetoothLeService();
-
 		// Initialize the layout
 		setContentView(R.layout.game_config_main);
 
 		// create the default configuration for this game
 		this.config = createDefaultConfig();
-		
+
 		// if there is a saved configuration, modify the default configuration accordingly
 		if (!this.config.restoreSavedConfig(saveFileName(), this)) {
 			MessageBox.popUpMessage(Resources.getSystem().getString(R.string.Config_Error_Msg),
 					this);
 		}
-		
+
 		if (this.config.isUserModifiable()) { // normal run: user has chance to modify configuration
 
 			// initialize and show the GUI that allows the user to specify the game's
@@ -248,6 +219,44 @@ View.OnClickListener {
 				MessageBox.popUpMessage(msg, this);
 			}
 		}
+
+		//Checks if the device placed on has BLE support then
+		//BLE-related features can be selectively disabled.
+		/*if (!getPackageManager().hasSystemFeature(android.content.pm.PackageManager.FEATURE_BLUETOOTH)) {
+			Log.i(TAG+":Start", getResources().getString(R.string.bt_not_supported));
+			Toast.makeText(this, R.string.bt_not_supported, Toast.LENGTH_SHORT).show();
+			//finish();
+			//This application runs using a BLE connection
+			return;
+		}else {
+			//BLE features are supported
+			Log.i(TAG+":Start", getResources().getString(R.string.bt_supported));
+		}*/
+
+		//gattServer = new GattServer();
+		//if(!gattServer.startGattServer(getApplicationContext())){
+		//	return;
+		//}
+
+		//Starting Advertising and RFCOMM Server
+		//rfcommserver = new RFCOMMServer();
+		//if(!rfcommserver.startRFCOMMServer(getApplicationContext())){
+		//	return;
+		//}
+
+		//Making a Fragment for Bluetooth Device List
+		FragmentManager fragmentManager = getFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragment = new BluetoothFragment();
+		//fragment.rfcommServer = rfcommserver;
+		fragmentTransaction.add(R.id.remoteTabLayout, fragment);
+		fragmentTransaction.commit();
+
+		//TODO: Safely Remove
+		bluetoothLeService = fragment.getBluetoothLeService();
+
+		//This Handler will handle all bluetooth messages
+		bluetoothHandler = fragment.bluetoothHandler;
 
 	}// onCreate
 
@@ -379,7 +388,7 @@ View.OnClickListener {
 
 		Log.i(TAG, config.getIpCode().equals("")+"");
 		if(!config.isLocal() && config.getIpCode().equals("")){
-			game = createBluetoothGame(rfcommserver.getSocket(), bluetoothLeService,false);
+			game = createBluetoothGame(/*rfcommserver.getSocket(),*/ bluetoothLeService,false);
 
 			if(game == null){
 				return "Could not find Bluetooth game";
@@ -445,7 +454,7 @@ View.OnClickListener {
 				Log.i("Tab Changed", tabId);
 				if(remoteTabString().equals(tabId)) {
 					Log.i("Tab Switch", "remote");
-					fragment.scanLeDevice(true);
+					fragment.scan();
 				}
 			}});
 
@@ -564,6 +573,16 @@ View.OnClickListener {
 		return true;
 	}//onCreateOptionsMenu
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+			case R.id.discoverable:
+				fragment.ensureDiscoverable();
+				return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	/**
 	 * this method is called whenever the user clicks on a button.
 	 * 
@@ -623,7 +642,7 @@ View.OnClickListener {
 		else if(button.getId() == R.id.bluetoothScanButton){
 			/*mLeDeviceListAdapter.clear();
 			Log.i("Attempt to Scan","Attempt 1");*/
-			fragment.scanLeDevice(true);
+			fragment.scan();
 		}
 
 

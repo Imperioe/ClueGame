@@ -4,12 +4,13 @@ ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifes
 INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:1:1-42:12
 INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:1:1-42:12
 INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:1:1-42:12
-MERGED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-media-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-26.0.0.aar\8b019604348aebcaf3bebd20b9497722\AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-fragment:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-26.0.0.aar\8cebd70ea3d6f6252728bf55dc8ae9eb\AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-core-utils:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-26.0.0.aar\76aed60f12c906ac46cb4596658ca6cd\AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-core-ui:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-26.0.0.aar\21fb464205bb4b762326452776a9fa19\AndroidManifest.xml:17:1-31:12
-MERGED from [com.android.support:support-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-26.0.0.aar\8558c3cc06d8af48dcd351c716b0d541\AndroidManifest.xml:17:1-31:12
+MERGED from [com.android.support:support-v4:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-27.0.0.aar\18140503f4e4b54e7b60d5918f3d5176\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-media-compat:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-27.0.0.aar\f63ba70134929f8fad849d8be3bc574b\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-fragment:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-27.0.0.aar\124cdb4f4ebf323ad55d88daf6eb496b\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-utils:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-27.0.0.aar\95fc07b6150012549a9db77cbcadc14e\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-core-ui:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-27.0.0.aar\8c66cc9bdb1f6e0828cdc889f6af6d67\AndroidManifest.xml:17:1-22:12
+MERGED from [com.android.support:support-compat:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-27.0.0.aar\2a541401c3e8663a25c7b912465bd962\AndroidManifest.xml:17:1-22:12
+MERGED from [android.arch.lifecycle:runtime:1.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\runtime-1.0.0.aar\2daf0de0caae0c1c8295b37d9bff355c\AndroidManifest.xml:17:1-30:12
 INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:1:1-42:12
 INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:1:1-42:12
 INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:1:1-42:12
@@ -27,34 +28,6 @@ INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidMani
 		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:3:5-28
 		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
-uses-sdk
-ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:6:5-47
-INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:6:5-47
-INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:6:5-47
-MERGED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:21:5-23:54
-MERGED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:21:5-23:54
-MERGED from [com.android.support:support-media-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-26.0.0.aar\8b019604348aebcaf3bebd20b9497722\AndroidManifest.xml:21:5-23:63
-MERGED from [com.android.support:support-media-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-26.0.0.aar\8b019604348aebcaf3bebd20b9497722\AndroidManifest.xml:21:5-23:63
-MERGED from [com.android.support:support-fragment:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-26.0.0.aar\8cebd70ea3d6f6252728bf55dc8ae9eb\AndroidManifest.xml:21:5-23:60
-MERGED from [com.android.support:support-fragment:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-26.0.0.aar\8cebd70ea3d6f6252728bf55dc8ae9eb\AndroidManifest.xml:21:5-23:60
-MERGED from [com.android.support:support-core-utils:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-26.0.0.aar\76aed60f12c906ac46cb4596658ca6cd\AndroidManifest.xml:21:5-23:61
-MERGED from [com.android.support:support-core-utils:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-26.0.0.aar\76aed60f12c906ac46cb4596658ca6cd\AndroidManifest.xml:21:5-23:61
-MERGED from [com.android.support:support-core-ui:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-26.0.0.aar\21fb464205bb4b762326452776a9fa19\AndroidManifest.xml:21:5-23:58
-MERGED from [com.android.support:support-core-ui:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-26.0.0.aar\21fb464205bb4b762326452776a9fa19\AndroidManifest.xml:21:5-23:58
-MERGED from [com.android.support:support-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-26.0.0.aar\8558c3cc06d8af48dcd351c716b0d541\AndroidManifest.xml:21:5-23:58
-MERGED from [com.android.support:support-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-26.0.0.aar\8558c3cc06d8af48dcd351c716b0d541\AndroidManifest.xml:21:5-23:58
-INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:6:5-47
-INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:6:5-47
-	tools:overrideLibrary
-		ADDED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:23:9-51
-	android:targetSdkVersion
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:6:15-44
-		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
-		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
-	android:minSdkVersion
-		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:6:5-47
-		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
 uses-permission#android.permission.INTERNET
 ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:8:5-67
 	android:name
@@ -64,13 +37,13 @@ ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifes
 	android:name
 		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:9:22-76
 uses-permission#android.permission.BLUETOOTH
-ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:10:5-67
+ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:12:5-67
 	android:name
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:10:22-65
+		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:12:22-65
 uses-permission#android.permission.BLUETOOTH_ADMIN
-ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:11:5-73
+ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:13:5-73
 	android:name
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:11:22-71
+		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:13:22-71
 uses-permission#android.permission.ACCESS_FINE_LOCATION
 ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:14:5-78
 	android:name
@@ -79,26 +52,10 @@ uses-permission#android.permission.ACCESS_COARSE_LOCATION
 ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:15:5-80
 	android:name
 		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:15:22-78
-uses-feature#android.hardware.bluetooth_le
-ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:17:5-90
-	android:required
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:17:64-88
-	android:name
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:17:19-63
 application
 ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:19:5-40:19
-MERGED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-media-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-26.0.0.aar\8b019604348aebcaf3bebd20b9497722\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-media-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-26.0.0.aar\8b019604348aebcaf3bebd20b9497722\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-fragment:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-26.0.0.aar\8cebd70ea3d6f6252728bf55dc8ae9eb\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-fragment:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-26.0.0.aar\8cebd70ea3d6f6252728bf55dc8ae9eb\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-core-utils:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-26.0.0.aar\76aed60f12c906ac46cb4596658ca6cd\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-core-utils:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-26.0.0.aar\76aed60f12c906ac46cb4596658ca6cd\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-core-ui:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-26.0.0.aar\21fb464205bb4b762326452776a9fa19\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-core-ui:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-26.0.0.aar\21fb464205bb4b762326452776a9fa19\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-26.0.0.aar\8558c3cc06d8af48dcd351c716b0d541\AndroidManifest.xml:25:5-29:19
-MERGED from [com.android.support:support-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-26.0.0.aar\8558c3cc06d8af48dcd351c716b0d541\AndroidManifest.xml:25:5-29:19
+MERGED from [android.arch.lifecycle:runtime:1.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\runtime-1.0.0.aar\2daf0de0caae0c1c8295b37d9bff355c\AndroidManifest.xml:24:5-28:19
+MERGED from [android.arch.lifecycle:runtime:1.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\runtime-1.0.0.aar\2daf0de0caae0c1c8295b37d9bff355c\AndroidManifest.xml:24:5-28:19
 	android:label
 		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:21:9-41
 	android:icon
@@ -121,33 +78,37 @@ category#android.intent.category.LAUNCHER
 ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:28:17-77
 	android:name
 		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:28:27-74
-activity#edu.up.cs301.game.util.DeviceScanActivity
-ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:32:9-87
-	android:name
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:32:19-75
-activity#edu.up.cs301.game.util.DeviceControlActivity
-ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:34:9-90
-	android:name
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:34:19-78
-service#edu.up.cs301.game.util.BluetoothLeService
-ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:36:9-38:38
-	android:enabled
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:38:13-35
-	android:name
-		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml:37:13-69
-meta-data#android.support.VERSION
-ADDED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-media-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-26.0.0.aar\8b019604348aebcaf3bebd20b9497722\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-media-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-26.0.0.aar\8b019604348aebcaf3bebd20b9497722\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-fragment:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-26.0.0.aar\8cebd70ea3d6f6252728bf55dc8ae9eb\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-fragment:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-26.0.0.aar\8cebd70ea3d6f6252728bf55dc8ae9eb\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-core-utils:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-26.0.0.aar\76aed60f12c906ac46cb4596658ca6cd\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-core-utils:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-26.0.0.aar\76aed60f12c906ac46cb4596658ca6cd\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-core-ui:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-26.0.0.aar\21fb464205bb4b762326452776a9fa19\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-core-ui:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-26.0.0.aar\21fb464205bb4b762326452776a9fa19\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-26.0.0.aar\8558c3cc06d8af48dcd351c716b0d541\AndroidManifest.xml:26:9-28:38
-MERGED from [com.android.support:support-compat:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-26.0.0.aar\8558c3cc06d8af48dcd351c716b0d541\AndroidManifest.xml:26:9-28:38
+uses-sdk
+INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+MERGED from [com.android.support:support-v4:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-27.0.0.aar\18140503f4e4b54e7b60d5918f3d5176\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-v4:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-27.0.0.aar\18140503f4e4b54e7b60d5918f3d5176\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-27.0.0.aar\f63ba70134929f8fad849d8be3bc574b\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-media-compat:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-media-compat-27.0.0.aar\f63ba70134929f8fad849d8be3bc574b\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-27.0.0.aar\124cdb4f4ebf323ad55d88daf6eb496b\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-fragment:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-fragment-27.0.0.aar\124cdb4f4ebf323ad55d88daf6eb496b\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-27.0.0.aar\95fc07b6150012549a9db77cbcadc14e\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-utils:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-utils-27.0.0.aar\95fc07b6150012549a9db77cbcadc14e\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-27.0.0.aar\8c66cc9bdb1f6e0828cdc889f6af6d67\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-core-ui:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-core-ui-27.0.0.aar\8c66cc9bdb1f6e0828cdc889f6af6d67\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-27.0.0.aar\2a541401c3e8663a25c7b912465bd962\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-compat:27.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-compat-27.0.0.aar\2a541401c3e8663a25c7b912465bd962\AndroidManifest.xml:20:5-44
+MERGED from [android.arch.lifecycle:runtime:1.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\runtime-1.0.0.aar\2daf0de0caae0c1c8295b37d9bff355c\AndroidManifest.xml:20:5-22:41
+MERGED from [android.arch.lifecycle:runtime:1.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\runtime-1.0.0.aar\2daf0de0caae0c1c8295b37d9bff355c\AndroidManifest.xml:20:5-22:41
+INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+		ADDED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\SBEBS\Documents\GitHub\ClueGame2\app\src\main\AndroidManifest.xml
+meta-data#android.arch.lifecycle.VERSION
+ADDED from [android.arch.lifecycle:runtime:1.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\runtime-1.0.0.aar\2daf0de0caae0c1c8295b37d9bff355c\AndroidManifest.xml:25:9-27:47
 	android:value
-		ADDED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:28:13-35
+		ADDED from [android.arch.lifecycle:runtime:1.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\runtime-1.0.0.aar\2daf0de0caae0c1c8295b37d9bff355c\AndroidManifest.xml:27:13-44
 	android:name
-		ADDED from [com.android.support:support-v4:26.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\support-v4-26.0.0.aar\7fc6b9d607edd9958d713043bdaece5b\AndroidManifest.xml:27:13-51
+		ADDED from [android.arch.lifecycle:runtime:1.0.0] C:\Users\SBEBS\.gradle\caches\transforms-1\files-1.1\runtime-1.0.0.aar\2daf0de0caae0c1c8295b37d9bff355c\AndroidManifest.xml:26:13-58
