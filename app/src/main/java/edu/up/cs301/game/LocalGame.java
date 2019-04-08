@@ -196,7 +196,7 @@ public abstract class LocalGame implements Game, Tickable {
 			if (action instanceof MyNameIsAction &&
 					gameStage == GameStage.WAITING_FOR_NAMES) {
 				MyNameIsAction mnis = (MyNameIsAction) action;
-				Logger.debug(TAG, "received 'myNameIs' ("+mnis.getName()+")");
+				Logger.debugLog(TAG, "received 'myNameIs' ("+mnis.getName()+")");
 
 				// mark that player as having given us its name
 				int playerIdx = getPlayerIdx(mnis.getPlayer());
@@ -211,7 +211,7 @@ public abstract class LocalGame implements Game, Tickable {
 				// game stage, and send a message to each player that the game is
 				// about to start
 				if (playerNameCount >= playerNames.length) {
-					Logger.debug(TAG, "broadcasting player names");
+					Logger.debugLog(TAG, "broadcasting player names");
 					gameStage = GameStage.WAITING_FOR_READY;
 					playersReady = new boolean[players.length]; // array to keep track of players responding
 					for (GamePlayer p : players) {
@@ -230,7 +230,7 @@ public abstract class LocalGame implements Game, Tickable {
 
 				// mark the given player as being ready
 				int playerIdx = getPlayerIdx(ra.getPlayer());
-				Logger.debug(TAG, "got 'ready' ("+playerNames[playerIdx]+")");
+				Logger.debugLog(TAG, "got 'ready' ("+playerNames[playerIdx]+")");
 				if (playerIdx >= 0 && !playersReady[playerIdx]) {
 					playersReady[playerIdx] = true;
 					synchronized (this) {
@@ -242,7 +242,7 @@ public abstract class LocalGame implements Game, Tickable {
 				// send each player the initial state
 				if (playerReadyCount >= playerNames.length) {
 					gameStage = GameStage.DURING_GAME;
-					Logger.debug(TAG, "broadcasting initial state");
+					Logger.debugLog(TAG, "broadcasting initial state");
 					// send each player the initial state of the game
 					sendAllUpdatedStateInitial();
 				}

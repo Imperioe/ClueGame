@@ -1,5 +1,6 @@
 package edu.up.cs301.game.util;
 
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,13 +16,19 @@ public class Logger {
     //Switch for knowing if we are in debug mode or not. We assume by default we are not in debug mode
     private static boolean debug = true;
     //Toast only happens after the game starts
-    //TODO: Toast logging- all logging will toast only if the toasting is true
     private static boolean toast = false;
+    //Context for Toast Logging
+    private static Context context = null;
+    //How Long should the Toast be Displayed
+    private static int LENGTH = Toast.LENGTH_SHORT;
     //Variables for the other types of logging available to students
     public static final int DEBUG = 0;
     public static final int WARN = 1;
     public static final int ERROR = 2;
     public static final int FAILURE = 3;
+    //These should be used to set the LENGTH variable for Toasting Length
+    public static final int SHORT = Toast.LENGTH_SHORT;
+    public static final int LONG = Toast.LENGTH_LONG;
 
 
     /**
@@ -38,7 +45,10 @@ public class Logger {
         else {
             Log.i(loggingTag, logMessage);
         }
-        //TODO: Put in the toast logging.
+        //Toast Logging
+        if(toast) {
+            Toast.makeText(context, logMessage, LENGTH).show();
+        }
     }
 
     /**
@@ -81,6 +91,10 @@ public class Logger {
                         "match one of the given logging types. See the Logger Class for more information.");
                 break;
         }
+        //Toast logging
+        if(toast && (debug || !debug && logType != DEBUG)) {
+            Toast.makeText(context, logMessage, LENGTH).show();
+        }
     }
 
     /**
@@ -102,7 +116,6 @@ public class Logger {
     }
 
     //Getters and setters
-    //TEST
     public static boolean getDebugValue(){
         return debug;
     }
@@ -117,5 +130,13 @@ public class Logger {
     
     public static void setToastValue(boolean newToast){
         toast = newToast;   
+    }
+
+    public static void setContext(Context newContext){
+        context = newContext;
+    }
+
+    public static void setLength(int length){
+        LENGTH = length;
     }
 }

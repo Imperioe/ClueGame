@@ -17,6 +17,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -43,14 +44,14 @@ import edu.up.cs301.game.util.MessageBox;
  */
 public abstract class GameMainActivity extends Activity implements
 View.OnClickListener {
-
+	//Tag for Logging
+	private static final String TAG = "GameMainActivity";
 	/*
 	 * ====================================================================
 	 * Instance Variables
 	 * --------------------------------------------------------------------
 	 */
-	//Tag for logging
-	private static final String TAG = "GameMainActvity";
+
 	// A reference to the object representing the game itself. This is the
 	// object that knows the rules of the game. This variable is initialized in
 	// launchGame.
@@ -142,6 +143,9 @@ View.OnClickListener {
 	public final void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		//Set Context for Toast Logging
+		Logger.setContext(getApplicationContext());
+
 		// Initialize the layout
 		setContentView(R.layout.game_config_main);
 
@@ -175,6 +179,16 @@ View.OnClickListener {
 			}
 		}
 
+		if (((CheckBox) findViewById(R.id.on_screenDebugging)).isChecked()) {
+			Logger.setToastValue(true);
+		} else {
+			Logger.setToastValue(false);
+		}
+		if (((CheckBox) findViewById(R.id.consoleDebugging)).isChecked()){
+			Logger.setDebugValue(true);
+		}else {
+			Logger.setDebugValue(false);
+		}
 	}// onCreate
 
 	/**
@@ -455,6 +469,10 @@ View.OnClickListener {
 		v.setOnClickListener(this);
 		v = findViewById(R.id.playGameButton);
 		v.setOnClickListener(this);
+		v = findViewById(R.id.on_screenDebugging);
+		v.setOnClickListener(this);
+		v = findViewById(R.id.consoleDebugging);
+		v.setOnClickListener(this);
 
 
 		String ipCode = IPCoder.encodeLocalIP();
@@ -478,7 +496,7 @@ View.OnClickListener {
 	 */
 	public void onClick(View button) {
 		
-		Logger.debugLog("onClick", "just clicked");
+		Logger.log(TAG, "Clicked "+button);
 		
 		// if the GUI many not have been fully initialized, ignore
 		if (justStarted) {
@@ -526,6 +544,24 @@ View.OnClickListener {
 				MessageBox.popUpMessage(msg, this);
 			}
 
+		}
+
+		//On-screen debugging checkbox
+		else if(button.getId() == R.id.on_screenDebugging){
+			if(((CheckBox)button).isChecked()){
+				Logger.setToastValue(true);
+			}else{
+				Logger.setToastValue(false);
+			}
+		}
+
+		//Console debugging checkbox
+		else if(button.getId() == R.id.consoleDebugging){
+			if(((CheckBox)button).isChecked()){
+				Logger.setDebugValue(true);
+			}else{
+				Logger.setDebugValue(false);
+			}
 		}
 
 	}// onClick

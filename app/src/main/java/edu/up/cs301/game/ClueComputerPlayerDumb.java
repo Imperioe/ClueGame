@@ -77,7 +77,7 @@ public class ClueComputerPlayerDumb extends ClueComputerPlayer
 
                 if (!myState.getCardToShow(playerNum).equals(lastCard))
                 { //If the lastCard shown was not checked
-                    Logger.log(TAG, " " + playerNum"Looking at Card: " + myState.getCardToShow(playerNum));
+                    Logger.log(TAG, " " + playerNum+"Looking at Card: " + myState.getCardToShow(playerNum));
                     String card = myState.getCardToShow(playerNum); //get the card shown to the AI
                     lastCard = card; //set last card to the card being checked
                     checkbox(card);

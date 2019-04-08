@@ -23,6 +23,20 @@
             android:layout_marginLeft="@dimen/config_horiz_margin"
             android:text="@string/save_config_as_default" />
 
+        <CheckBox
+            android:id="@+id/on-screenDebugging"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/consoleDebugging"
+            android:text="@string/on_screen_debugging" />
+
+        <CheckBox
+            android:id="@+id/consoleDebugging"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/playGameButton"
+            android:text="Console Debugging"/>
+
         <Button
             android:id="@+id/playGameButton"
             android:layout_width="wrap_content"
