@@ -14,8 +14,8 @@ really need to.-->
     <string name="player_type">Player Type</string>
     <string name="guest">Guest</string>
     <string name="save_config_as_default">Make Configuration Default</string>
-    <string name="on_screen_debugging">On-screen Debugging</string>
-    <string name="console_debugging">Console Debugging</string>
+    <string name="on_screen_logging">On-screen Logging</string>
+    <string name="debug_logging">Debug Logging</string>
     <string name="start_the_game">Start Game!</string>
     <string name="Saved_Config_Msg">Game configuration saved.</string>
     <!--The following strings are for the continue game messages-->

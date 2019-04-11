@@ -44,14 +44,14 @@ import edu.up.cs301.game.util.MessageBox;
  */
 public abstract class GameMainActivity extends Activity implements
 View.OnClickListener {
-	//Tag for Logging
-	private static final String TAG = "GameMainActivity";
+
 	/*
 	 * ====================================================================
 	 * Instance Variables
 	 * --------------------------------------------------------------------
 	 */
-
+	//Tag for logging
+	private static final String TAG = "GameMainActvity";
 	// A reference to the object representing the game itself. This is the
 	// object that knows the rules of the game. This variable is initialized in
 	// launchGame.
@@ -179,12 +179,12 @@ View.OnClickListener {
 			}
 		}
 
-		if (((CheckBox) findViewById(R.id.on_screenDebugging)).isChecked()) {
+		if (((CheckBox) findViewById(R.id.on_screenLogging)).isChecked()) {
 			Logger.setToastValue(true);
 		} else {
 			Logger.setToastValue(false);
 		}
-		if (((CheckBox) findViewById(R.id.consoleDebugging)).isChecked()){
+		if (((CheckBox) findViewById(R.id.debugLogging)).isChecked()){
 			Logger.setDebugValue(true);
 		}else {
 			Logger.setDebugValue(false);
@@ -469,9 +469,9 @@ View.OnClickListener {
 		v.setOnClickListener(this);
 		v = findViewById(R.id.playGameButton);
 		v.setOnClickListener(this);
-		v = findViewById(R.id.on_screenDebugging);
+		v = findViewById(R.id.on_screenLogging);
 		v.setOnClickListener(this);
-		v = findViewById(R.id.consoleDebugging);
+		v = findViewById(R.id.debugLogging);
 		v.setOnClickListener(this);
 
 
@@ -547,7 +547,7 @@ View.OnClickListener {
 		}
 
 		//On-screen debugging checkbox
-		else if(button.getId() == R.id.on_screenDebugging){
+		else if(button.getId() == R.id.on_screenLogging){
 			if(((CheckBox)button).isChecked()){
 				Logger.setToastValue(true);
 			}else{
@@ -556,7 +556,7 @@ View.OnClickListener {
 		}
 
 		//Console debugging checkbox
-		else if(button.getId() == R.id.consoleDebugging){
+		else if(button.getId() == R.id.debugLogging){
 			if(((CheckBox)button).isChecked()){
 				Logger.setDebugValue(true);
 			}else{
