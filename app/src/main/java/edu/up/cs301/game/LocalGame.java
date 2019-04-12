@@ -38,6 +38,10 @@ public abstract class LocalGame implements Game, Tickable {
 	// the stage that the game is in
 	private GameStage gameStage = GameStage.BEFORE_GAME;
 
+	//Boolean to tell if we are in setup phase or , assuming we will always want to setup the game
+	protected boolean inSetupPhase = true;
+	private int numSetupTurns = 3;
+
 
 	// the handler for the game's thread
 	private Handler myHandler;
@@ -226,13 +230,12 @@ public abstract class LocalGame implements Game, Tickable {
 				if (playerReadyCount >= playerNames.length) {
 					//Now the framework will initiate setup phase first, and then will start the real
 					//turns of the game.
-					Logger.debugLog(TAG, "Beginning Setup Phase");
-					gameStage = GameStage.SETUP_PHASE;
-					this.startGameSetup();
+					gameStage = GameStage.DURING_GAME;
+					//this.startGameSetup();
 					//Logger.debugLog(TAG, "Completed Setup Phase");
-					//Logger.debugLog(TAG, "broadcasting initial state");
+					Logger.debugLog(TAG, "broadcasting initial state");
 					// send each player the initial state of the game
-					//sendAllUpdatedState();
+					sendAllUpdatedState();
 				}
 			}
 			else if (action instanceof TimerAction && gameStage == GameStage.DURING_GAME) {
@@ -250,24 +253,9 @@ public abstract class LocalGame implements Game, Tickable {
 			else if (action instanceof GameAction && gameStage == GameStage.DURING_GAME) {
 
 				// CASE 4: it's during the game, and we get an action from a player
-                Logger.debugLog(TAG, "PLAYING THE ACUTAL GAME NOW! :)");
+
 				this.checkAndHandleAction(action);
 			}
-			//CASE 5: It's during setup phase and we get a timer action (same action as CASE 3)
-            else if (action instanceof TimerAction && gameStage == GameStage.SETUP_PHASE) {
-			    // Only perform the "tick" if it was our timer; otherwise, just post the message
-                if (((TimerAction)action).getTimer() == myTimer) {
-                    this.timerTicked();
-                }
-                else {
-                    this.checkAndHandleAction(action);
-                }
-            }
-            //CASE 6: It's during setup phase and we get an action from a player
-            else if (action instanceof GameAction && gameStage == GameStage.SETUP_PHASE) {
-			    Logger.debugLog(TAG, "Still in setup!");
-                this.checkAndHandleAction(action);
-            }
 			else if (action instanceof GameOverAckAction && gameStage == GameStage.GAME_OVER) {
 
 				// CASE 7: the game is over, and we are waiting for each player to
@@ -427,30 +415,4 @@ public abstract class LocalGame implements Game, Tickable {
 		}
 	}
 
-	/**
-	 * Method to be called once setup is complete. This lets the game know it is no longer in setup
-	 * phase and now needs to continue with the rest of the game.
-	 */
-	public void endSetup(){
-		gameStage = GameStage.DURING_GAME;
-	}
-
-	/**
-	 * For sending the game state to the players with the knowledge we are in setup phase
-	 */
-	protected final void startGameSetup() {
-		for (GamePlayer p : players) {
-			gameSetup(p);
-		}
-	}
-
-    //So we can know if the game is in the setup phase or not
-	public boolean inSetupPhase(){
-		if(this.gameStage == GameStage.SETUP_PHASE){
-			return true;
-		}
-		return false;
-	}
-
-	public abstract void gameSetup(GamePlayer p);
 }// class LocalGame

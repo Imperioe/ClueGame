@@ -298,11 +298,12 @@ public class ClueHumanPlayer extends GameHumanPlayer implements CluePlayer, View
         //This is displayed in the playerTextView
         if(info instanceof ClueState) {
             recentState = new ClueState((ClueState)info);
+            Logger.log("SAVE ME", ""+recentState.getSetupPhase());
             if(recentState.getSetupPhase()){
-                Logger.log("ERIC IS TACO TWO", "PLAYING THE GAME BUT NOT REALLY");
+                Logger.debugLog("STATE", "In setup phase");
             }
             else{
-                Logger.log("ERIC IS DOUBLE BURRITO", "Playing the real game!");
+                Logger.debugLog("STATE", "In real game phase");
             }
             if(!nameSet) {
                 switch (playerNum) {
@@ -736,6 +737,7 @@ public class ClueHumanPlayer extends GameHumanPlayer implements CluePlayer, View
             weaponSpinner.setEnabled(false);
             suspectSpinner.setEnabled(false);
             game.sendAction(endTurn);
+
         }
 
         //CheckBoxes

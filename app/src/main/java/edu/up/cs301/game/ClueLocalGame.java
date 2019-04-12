@@ -42,9 +42,9 @@ import edu.up.cs301.game.util.Logger;
 
 public class ClueLocalGame extends LocalGame
 {
-    //Test variable for testing setup stuff
-    int setupCount = 0;
-    int maxSetupTurns = 0;
+    //FOR TESTING
+    int setupTurns = 3;
+    int currentSetupTurn = 0;
 
     //Tag for logging 
     private static final String TAG = "ClueLocalGame";
@@ -843,6 +843,15 @@ public class ClueLocalGame extends LocalGame
      */
     public void sendUpdatedStateTo(GamePlayer p)
     {
+       // Logger.log("HELP ME", ""+state.getSetupPhase());
+        //Logger.log("SARA PERKINS", ""+ this.currentSetupTurn + " :) " + this.setupTurns);
+
+        if(state.getSetupPhase()&&(this.currentSetupTurn >= this.setupTurns*state.getNumPlayers())){
+            state.setSetupPhase(false);
+        }
+        else {
+            this.currentSetupTurn++;
+        }
         ClueState sendState = new ClueState(state);
         if(p instanceof ClueHumanPlayer) //If the player is a human player
         {
@@ -878,19 +887,14 @@ public class ClueLocalGame extends LocalGame
                 }
             }
         }
+        Logger.log(":(", ""+sendState.getSetupPhase());
         p.sendInfo(sendState); //Send the state to the player
-        //After I send the info I need to see if we should exit setup phase:
-        if(this.setupCount >= this.maxSetupTurns){
-            this.endSetup();
-            state.setSetupPhase(false);
-        }
-        this.setupCount++;
     }
 
-    public void gameSetup(GamePlayer p){
-        this.state.setSetupPhase(true);
-        sendUpdatedStateTo(p);
-    }
+    //public void gameSetup(GamePlayer p){
+     //   this.state.setSetupPhase(true);
+      //  sendUpdatedStateTo(p);
+   // }
 
 
     @Override
