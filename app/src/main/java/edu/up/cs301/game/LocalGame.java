@@ -38,6 +38,7 @@ public abstract class LocalGame implements Game, Tickable {
 	// the stage that the game is in
 	private GameStage gameStage = GameStage.BEFORE_GAME;
 
+
 	// the handler for the game's thread
 	private Handler myHandler;
 
@@ -61,6 +62,19 @@ public abstract class LocalGame implements Game, Tickable {
 
 	// this game's timer and timer action
 	private GameTimer myTimer = new GameTimer(this);
+
+
+	/**
+	 * Notify the given player that its state has changed. This should involve sending
+	 * a GameInfo object to the player. If the game is not a perfect-information game
+	 * this method should remove any information from the game that the player is not
+	 * allowed to know.
+	 *
+	 * @param p
+	 * 			the player to notify
+	 */
+	protected abstract void sendUpdatedStateTo(GamePlayer p);
+
 
 	/**
 	 * Returns the game's timer
@@ -119,29 +133,6 @@ public abstract class LocalGame implements Game, Tickable {
 			players[i].sendInfo(new BindGameInfo(this, i));
 		}
 	}
-
-	/**
-	 * Notify the given player that its state has changed. This should involve sending
-	 * a GameInfo object to the player. If the game is not a perfect-information game
-	 * this method should remove any information from the game that the player is not
-	 * allowed to know.
-	 *
-	 * @param p
-	 * 			the player to notify
-	 */
-	protected abstract void sendUpdatedStateTo(GamePlayer p);
-
-	/**
-	 * Notify the players with the initial game state. This will send a GameInfo object to the player.
-	 *  If the game is not a perfect-information game
-	 *  this method should remove any information from the game that the player is not
-	 *  allowed to know.
-	 *
-	 * @param p
-	 * 			the player to notify
-	 */
-	protected abstract void sendUpdatedStateToInitial(GamePlayer p);
-
 	/**
 	 * Notify all players that the game's state has changed. Typically this simply
 	 * calls the 'notifyStateChanged' method for each player.
@@ -152,14 +143,6 @@ public abstract class LocalGame implements Game, Tickable {
 		}
 	}
 
-	/**
-	 * For sending the initial state to the players
-	 */
-	protected final void sendAllUpdatedStateInitial(){
-		for (GamePlayer p: players){
-			sendUpdatedStateToInitial(p);
-		}
-	}
 
 	/**
 	 * Determines the numeric player ID (0 through whatever) for the given player.
@@ -241,10 +224,15 @@ public abstract class LocalGame implements Game, Tickable {
 				// if all players are ready, set the game stage to "during game", and
 				// send each player the initial state
 				if (playerReadyCount >= playerNames.length) {
-					gameStage = GameStage.DURING_GAME;
-					Logger.debugLog(TAG, "broadcasting initial state");
+					//Now the framework will initiate setup phase first, and then will start the real
+					//turns of the game.
+					Logger.debugLog(TAG, "Beginning Setup Phase");
+					gameStage = GameStage.SETUP_PHASE;
+					this.startGameSetup();
+					//Logger.debugLog(TAG, "Completed Setup Phase");
+					//Logger.debugLog(TAG, "broadcasting initial state");
 					// send each player the initial state of the game
-					sendAllUpdatedStateInitial();
+					//sendAllUpdatedState();
 				}
 			}
 			else if (action instanceof TimerAction && gameStage == GameStage.DURING_GAME) {
@@ -262,11 +250,27 @@ public abstract class LocalGame implements Game, Tickable {
 			else if (action instanceof GameAction && gameStage == GameStage.DURING_GAME) {
 
 				// CASE 4: it's during the game, and we get an action from a player
+                Logger.debugLog(TAG, "PLAYING THE ACUTAL GAME NOW! :)");
 				this.checkAndHandleAction(action);
 			}
+			//CASE 5: It's during setup phase and we get a timer action (same action as CASE 3)
+            else if (action instanceof TimerAction && gameStage == GameStage.SETUP_PHASE) {
+			    // Only perform the "tick" if it was our timer; otherwise, just post the message
+                if (((TimerAction)action).getTimer() == myTimer) {
+                    this.timerTicked();
+                }
+                else {
+                    this.checkAndHandleAction(action);
+                }
+            }
+            //CASE 6: It's during setup phase and we get an action from a player
+            else if (action instanceof GameAction && gameStage == GameStage.SETUP_PHASE) {
+			    Logger.debugLog(TAG, "Still in setup!");
+                this.checkAndHandleAction(action);
+            }
 			else if (action instanceof GameOverAckAction && gameStage == GameStage.GAME_OVER) {
 
-				// CASE 5: the game is over, and we are waiting for each player to
+				// CASE 7: the game is over, and we are waiting for each player to
 				// acknowledge this
 				int playerIdx = getPlayerIdx(action.getPlayer());
 				if (playerIdx >= 0 && !playersFinished[playerIdx]) {
@@ -404,7 +408,7 @@ public abstract class LocalGame implements Game, Tickable {
 
 	// an enum-class that itemizes the game stages
 	private static enum GameStage {
-		BEFORE_GAME, WAITING_FOR_NAMES, WAITING_FOR_READY, DURING_GAME, GAME_OVER
+		BEFORE_GAME, WAITING_FOR_NAMES, WAITING_FOR_READY, DURING_GAME, GAME_OVER, SETUP_PHASE
 	}
 
 	// a handler class for the game's thread
@@ -423,4 +427,30 @@ public abstract class LocalGame implements Game, Tickable {
 		}
 	}
 
+	/**
+	 * Method to be called once setup is complete. This lets the game know it is no longer in setup
+	 * phase and now needs to continue with the rest of the game.
+	 */
+	public void endSetup(){
+		gameStage = GameStage.DURING_GAME;
+	}
+
+	/**
+	 * For sending the game state to the players with the knowledge we are in setup phase
+	 */
+	protected final void startGameSetup() {
+		for (GamePlayer p : players) {
+			gameSetup(p);
+		}
+	}
+
+    //So we can know if the game is in the setup phase or not
+	public boolean inSetupPhase(){
+		if(this.gameStage == GameStage.SETUP_PHASE){
+			return true;
+		}
+		return false;
+	}
+
+	public abstract void gameSetup(GamePlayer p);
 }// class LocalGame

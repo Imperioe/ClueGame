@@ -232,8 +232,6 @@ public abstract class GameHumanPlayer implements GamePlayer, Tickable {
 	public abstract void receiveInfo(GameInfo info);
 
 
-	public abstract void recieveInfoInitial(GameInfo info);
-
 	/**
 	 * Helper-class that runs the on the GUI's main thread when
 	 * there is a message to the player.
@@ -311,22 +309,11 @@ public abstract class GameHumanPlayer implements GamePlayer, Tickable {
 					timerTicked();
 				}
 				else {
-						if(isInitialState){
-						recieveInfoInitial(myInfo);
-					}
-					else {
-						receiveInfo(myInfo);
-					}
+				    receiveInfo(myInfo);
 				}
 			}
 			else {
-				// pass the state on to the subclass
-				if(isInitialState){
-					recieveInfoInitial(myInfo);
-				}
-				else {
 					receiveInfo(myInfo);
-				}
 			}
 		}
 	}

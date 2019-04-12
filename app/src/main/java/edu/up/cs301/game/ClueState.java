@@ -513,5 +513,9 @@ public class ClueState extends GameState implements Serializable{
     public void setPulledIn(int playerID, boolean b) {
         pulledIn[playerID] = b;
     }
+
+    //Getters and setters for the setupPhase information
+    public void setSetupPhase(boolean phase){inSetupPhase = phase;}
+    public boolean getSetupPhase(){return  inSetupPhase;}
 }
 

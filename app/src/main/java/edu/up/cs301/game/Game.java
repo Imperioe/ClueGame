@@ -29,6 +29,5 @@ public interface Game {
 	 * @param action
 	 *            the action to send
 	 */
-	public abstract void sendAction(GameAction action);	
-	
+	public abstract void sendAction(GameAction action);
 }

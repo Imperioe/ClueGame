@@ -15,4 +15,6 @@ public abstract class GameState extends GameInfo {
 	// to satisfy the Serializable interface
 	private static final long serialVersionUID = -5109179064333136954L;
 
+	protected boolean inSetupPhase = false;
+
 }

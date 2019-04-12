@@ -42,6 +42,10 @@ import edu.up.cs301.game.util.Logger;
 
 public class ClueLocalGame extends LocalGame
 {
+    //Test variable for testing setup stuff
+    int setupCount = 0;
+    int maxSetupTurns = 0;
+
     //Tag for logging 
     private static final String TAG = "ClueLocalGame";
     ClueMoveAction moveAction;
@@ -864,76 +868,29 @@ public class ClueLocalGame extends LocalGame
                 }
             }
         }
-        else if(p instanceof ClueComputerPlayerSmart)
-        {
-            ClueComputerPlayerSmart player = (ClueComputerPlayerSmart)p;
+        else if(p instanceof ClueComputerPlayerSmart) {
+            ClueComputerPlayerSmart player = (ClueComputerPlayerSmart) p;
             int playerCount = sendState.getNumPlayers(); //get number of players
-            for(int i = 0; i < playerCount; i++)
-            {
-                if(i != player.getPlayerID()) //If the player the state is being sent to is not the current player
+            for (int i = 0; i < playerCount; i++) {
+                if (i != player.getPlayerID()) //If the player the state is being sent to is not the current player
                 {
                     sendState.setCards(i, null); //Set the cards in other players hands to null so the current player does not have access to them
                 }
             }
         }
-
         p.sendInfo(sendState); //Send the state to the player
+        //After I send the info I need to see if we should exit setup phase:
+        if(this.setupCount >= this.maxSetupTurns){
+            this.endSetup();
+            state.setSetupPhase(false);
+        }
+        this.setupCount++;
     }
 
-    @Override
-    /**
-     * This method will send an updated state to a specified player
-     * @param p GamePlayer the state is being sent to
-     */
-    public void sendUpdatedStateToInitial(GamePlayer p)
-    {
-        ClueState sendState = new ClueState(state);
-        if(p instanceof ClueHumanPlayer) //If the player is a human player
-        {
-            ClueHumanPlayer player = (ClueHumanPlayer)p;
-            int playerCount = sendState.getNumPlayers(); //get number of players
-            for(int i = 0; i < playerCount; i++)
-            {
-                if(i != player.getPlayerID()) //If the player the state is being sent to is not the current player
-                {
-                    sendState.setCards(i, null); //Set the cards in other players hands to null so the current player does not have access to them
-                }
-            }
-
-            ((ClueHumanPlayer) p).sendInfoInitial(sendState); //Send the state to the player
-        }
-        else if(p instanceof ClueComputerPlayerDumb)
-        {
-            ClueComputerPlayerDumb player = (ClueComputerPlayerDumb)p;
-            int playerCount = sendState.getNumPlayers(); //get number of players
-            for(int i = 0; i < playerCount; i++)
-            {
-                if(i != player.getPlayerID()) //If the player the state is being sent to is not the current player
-                {
-                    sendState.setCards(i, null); //Set the cards in other players hands to null so the current player does not have access to them
-                }
-            }
-
-            p.sendInfo(sendState); //Send the state to the player
-        }
-        else if(p instanceof ClueComputerPlayerSmart)
-        {
-            ClueComputerPlayerSmart player = (ClueComputerPlayerSmart)p;
-            int playerCount = sendState.getNumPlayers(); //get number of players
-            for(int i = 0; i < playerCount; i++)
-            {
-                if(i != player.getPlayerID()) //If the player the state is being sent to is not the current player
-                {
-                    sendState.setCards(i, null); //Set the cards in other players hands to null so the current player does not have access to them
-                }
-            }
-
-            p.sendInfo(sendState); //Send the state to the player
-        }
+    public void gameSetup(GamePlayer p){
+        this.state.setSetupPhase(true);
+        sendUpdatedStateTo(p);
     }
-
-
-
 
 
     @Override
