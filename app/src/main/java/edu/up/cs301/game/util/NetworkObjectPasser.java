@@ -72,6 +72,8 @@ public abstract class NetworkObjectPasser {
 		while (createRunner.getStatus() == RunnerStatus.WAITING) {
 			Thread.yield();
 		}
+
+        Logger.debugLog(TAG, "Started the Network Receive-handler");
 		
 		// create/run a thread and handler for sending objects
 		// via the network
@@ -90,6 +92,7 @@ public abstract class NetworkObjectPasser {
 		while (sendHandler == null) {
 			Thread.yield();
 		}
+        Logger.debugLog(TAG, "Started the Network Send-handler");
 	}
 
 	public abstract void onReceiveObject(Object obj);
@@ -108,6 +111,7 @@ public abstract class NetworkObjectPasser {
 			this.ipAddress = ipAddress;
 			this.port = port;
 			this.status = RunnerStatus.WAITING;
+			Logger.debugLog(TAG, "IP Address: "+ipAddress+"   Port: "+port);
 		}
 		
 		public RunnerStatus getStatus() {
@@ -116,7 +120,7 @@ public abstract class NetworkObjectPasser {
 		
 		// run-method, which runs in the separate thread
 		public void run() {
-			Logger.debugLog(TAG, "starting run method at bottom");
+			Logger.debugLog(TAG, "starting The Network Receive-handler");
 			// the socket connection
 			Socket socket = null;
 			
@@ -124,7 +128,7 @@ public abstract class NetworkObjectPasser {
 			try {
 				if (ipAddress == null) {
 					// IP address is null, indicating that we are a server
-					Logger.debugLog(TAG, "about to create server socket");
+					Logger.debugLog(TAG, "Creating server socket");
 					// get (possibly creating) the server socket for this port
 					ServerSocket ss = ServerSocketMap.getServerSocket(port);
 					
@@ -132,18 +136,18 @@ public abstract class NetworkObjectPasser {
 					status = RunnerStatus.READY;
 					
 					// wait for a client to connect to us
-					Logger.debugLog(TAG, "server attempt at port " + port);
+					Logger.debugLog(TAG, "Attempting to make server on port " + port);
 					socket = ss.accept();
 					
 					// register that we are finished with the server socket
 					ServerSocketMap.release(port);
-					Logger.debugLog(TAG, "server connect at port "+port);
+					Logger.debugLog(TAG, "Server port "+port+" is active");
 					// set our externally-visible status to be "ready"
 					ready = true;
 				}
 				else {
 					// create as client socket
-					Logger.debugLog(TAG, "client attempt at port "+port);
+					Logger.debugLog(TAG, "Attempt to connect to port "+port);
 
 					// set our internal status to be "ready"
 					status = RunnerStatus.READY;
@@ -153,18 +157,19 @@ public abstract class NetworkObjectPasser {
 					
 					// set out externally-visible status to be "ready"
 					ready = true;
-					Logger.debugLog(TAG, "client connected at port "+port);
+					Logger.debugLog(TAG, "Client connected to port "+port);
 				}
 			} catch (IOException e) {
 				// if we could not make the connection, set our status to "failed" and return
 				status = RunnerStatus.FAILED;
-				Logger.debugLog(e.getClass()+"", e.getMessage());
+				Logger.log(TAG, "Failed to open or connect to port "+port, Logger.ERROR);
+				Logger.log(TAG, "Class: "+e.getClass()+"   Message: "+e.getMessage(), Logger.ERROR);
 				return;
 			}
 			
 			// create the input and output streams; also send already queued objects
 			synchronized (this) {
-				
+				Logger.debugLog(TAG, "Creating Input and Output streams for data transfer");
 				try {
 					// create the input and output streams, and flush the output stream
 					InputStream inBasic = socket.getInputStream();
@@ -175,18 +180,22 @@ public abstract class NetworkObjectPasser {
 				}
 				catch (IOException e) {
 					// if exception, return
+                    Logger.log(TAG, "Failed to make the input or output stream", Logger.ERROR);
+                    Logger.log(TAG, "Class: "+e.getClass()+"   Message: "+e.getMessage(),Logger.ERROR);
 					status = RunnerStatus.FAILED;
 					return;
 				}
-				
+
+				Logger.debugLog(TAG, "Sending Queued Objects");
 				// send out all queued-up objects
 				while (!objQueue.isEmpty()) {
 					Object obj = objQueue.remove();
+					Logger.debugLog(TAG, "Sending: " + obj.getClass());
 					try {
 						out.writeObject(obj);
 						out.flush();
 					} catch (IOException e) {
-						Logger.log(TAG, "could not write object", Logger.ERROR);
+						Logger.log(TAG, "Could not write object", Logger.ERROR);
 					}
 				}
 			}
@@ -195,12 +204,14 @@ public abstract class NetworkObjectPasser {
 			// invoking the user's 'onReceiveObject' method on each object
 			for (;;) {
 				try {
-					Logger.debugLog(TAG, "ready to read object");
+					Logger.debugLog(TAG, "Ready to read object");
 					Object obj = in.readObject();
-					Logger.debugLog(TAG, "object read ("+obj.getClass()+")");
+					Logger.debugLog(TAG, "Read Object: "+obj.getClass());
 					onReceiveObject(obj);
 				}
 				catch (Exception x) {
+				    Logger.log(TAG, "Read Failure",Logger.ERROR);
+				    Logger.log(TAG, "Class: "+x.getClass()+"   Message: "+ x.getMessage(), Logger.ERROR);
 					break;
 				}
 			}
@@ -227,7 +238,9 @@ public abstract class NetworkObjectPasser {
 	 *
 	 */
 	private class MsgRunnable implements Runnable {
-		
+
+	    private static final String TAG = "MsgRunnable";
+
 		// the object we're going to send
 		private Object obj;
 		
@@ -240,18 +253,21 @@ public abstract class NetworkObjectPasser {
 		// queues the object up for sending later
 		public void run() {
 			synchronized(this) {
+			    Logger.debugLog(TAG, "Attempting to write Object: "+obj.getClass());
 				boolean success = false;
 				if (out != null) {
 					try {
 						// write object
 						out.writeObject(obj);
 						success = true;
+						Logger.debugLog(TAG, "Object: "+obj.getClass()+" written");
 					} catch (IOException e) {
-						Logger.log(TAG, "could not write object", Logger.ERROR);
+						Logger.log(TAG, "Could not write object", Logger.ERROR);
 					}
 				}
 				if (!success) {
 					// could not write object, so queue it up
+                    Logger.debugLog(TAG, "Could not write object, Queuing...");
 					objQueue.add(obj);
 				}
 			}
@@ -272,6 +288,7 @@ public abstract class NetworkObjectPasser {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+			    Logger.log(TAG, "Class: "+e.getClass()+"   Message: "+ e.getMessage(), Logger.ERROR);
 			}
 		}
 
@@ -288,6 +305,8 @@ public abstract class NetworkObjectPasser {
 	 *
 	 */
 	private static class ServerSocketMap {
+
+	    private static final String TAG = "ServerSocketMap";
 		
 		// A hashtable that keeps track of all port numbers for which server sockets
 		// have already been created. It maps the port number to the pair
@@ -320,14 +339,18 @@ public abstract class NetworkObjectPasser {
 					// in the hash table, with a count of 1
 					ServerSocket ss;
 					try {
+					    Logger.debugLog(TAG, "Creating Server Socket");
 						ss = new ServerSocket(portNum);
 					} catch (IOException e) {
+					    Logger.log(TAG, "Failed to create the server socket", Logger.ERROR);
+                        Logger.log(TAG, "Class: "+e.getClass()+"   Message: "+e.getMessage(), Logger.ERROR);
 						return null;
 					}
 					pair = new Pair<ServerSocket,Integer>(ss,1);
 					map.put(portNum, pair);
 				}
 				else {
+				    Logger.debugLog(TAG, "Incrementing connection count of Socket");
 					// entry exists; increment its user-count
 					Pair<ServerSocket,Integer> newPair = new Pair<ServerSocket,Integer>(pair.first, pair.second+1);
 					map.put(portNum, newPair);
@@ -361,10 +384,14 @@ public abstract class NetworkObjectPasser {
 						new Pair<ServerSocket,Integer>(ss, newVal);
 				map.put(portNum, newPair);
 				if (newVal <= 0) {
+				    Logger.debugLog(TAG, "Removing Port "+portNum);
 					map.remove(portNum);
 					try {
+					    Logger.debugLog(TAG, "Closing Server Socket");
 						ss.close();
 					} catch (IOException e) {
+                        Logger.log(TAG, "Failed to close Server Socket", Logger.ERROR);
+                        Logger.log(TAG, "Class: "+e.getClass()+"   Message: "+e.getMessage(), Logger.ERROR);
 					}
 				}
 			}

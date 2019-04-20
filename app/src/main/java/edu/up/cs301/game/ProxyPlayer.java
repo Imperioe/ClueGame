@@ -39,7 +39,7 @@ public class ProxyPlayer implements GamePlayer {
      */
     public ProxyPlayer(int portNum) {
     	
-    	Logger.debugLog(TAG, "creating Proxy Player");
+    	Logger.debugLog(TAG, "Creating Proxy Player");
         
         // set instance variables to their initial values
         game = null; // the game
