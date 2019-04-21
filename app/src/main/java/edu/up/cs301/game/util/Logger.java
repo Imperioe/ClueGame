@@ -40,7 +40,7 @@ public class Logger {
      */
     public static void log(String loggingTag, String logMessage){
         if(loggingTag.length() > 23){
-            Log.wtf("LOGGING ERROR:", "Logging Tag cannot exceed 23 characters");
+            Log.wtf("LOGGING ERROR", "Logging Tag ("+loggingTag+") cannot exceed 23 characters");
         }
         else {
             Log.i(loggingTag, logMessage);

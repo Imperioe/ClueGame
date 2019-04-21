@@ -1,6 +1,8 @@
 package edu.up.cs301.game;
 
 import android.content.pm.ActivityInfo;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -17,6 +19,7 @@ public class ClueMainActivity extends GameMainActivity {
     private static final String TAG = "ClueMainActivity";
 
     public static final int PORT_NUMBER = 6732;
+    private int numberOfaccuse = 1;
 
     //An array list created for the player's types
     private ArrayList<GamePlayerType> gamePlayerTypes;
@@ -76,11 +79,35 @@ public class ClueMainActivity extends GameMainActivity {
     }
 
     @Override
+    protected void initSettingsTab() {
+        super.initSettingsTab();
+        SeekBar sk = (SeekBar) findViewById(R.id.accuseNumberSeeker);
+        sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                numberOfaccuse = i+1;
+                TextView t=(TextView)findViewById(R.id.accuseNumberText);
+                t.setText(getString(R.string.accuseNumberString)+" "+String.valueOf(i+1));
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        TextView t=(TextView)findViewById(R.id.accuseNumberText);
+        t.setText(getString(R.string.accuseNumberString)+" "+1);
+    }
+
+    @Override
     public LocalGame createLocalGame()
     {
         //Return a new local game with the number of players desired in the game
         //The number of players is determined by the size of the table rows created
         //The number of table rows (on the host tablet for network) is equal to the number of players that will be in the game
-        return new ClueLocalGame(tableRows.size());
+        return new ClueLocalGame(tableRows.size(), numberOfaccuse);
     }
 }

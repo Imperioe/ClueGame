@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Hashtable;
@@ -216,6 +217,10 @@ public abstract class NetworkObjectPasser {
 	 */
 	public void sendObject(Object obj) {
 		// schedule the "send" in the object's "sending" thread
+		if(!Serializable.class.isInstance(obj)){
+			Logger.log(TAG, "Object is not Serializable", Logger.ERROR);
+		}
+
 		Runnable run = new MsgRunnable(obj);
 		sendHandler.post(run);
 	}

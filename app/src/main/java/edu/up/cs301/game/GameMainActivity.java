@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TableLayout;
@@ -364,8 +365,12 @@ View.OnClickListener {
 		TabSpec remoteTabSpec = tabHost.newTabSpec(remoteTabString());
 		remoteTabSpec.setContent(R.id.remoteGameTab);
 		remoteTabSpec.setIndicator(remoteTabString());
+		TabSpec settingsTabSpec = tabHost.newTabSpec(settingsTabString());
+		settingsTabSpec.setContent(R.id.gameSettingsTab);
+		settingsTabSpec.setIndicator(settingsTabString());
 		tabHost.addTab(localTabSpec);
 		tabHost.addTab(remoteTabSpec);
+		tabHost.addTab(settingsTabSpec);
 
 		// make sure the current tab is the right one
 		tabHost.setCurrentTab(config.isLocal() ? 0 : 1);
@@ -441,6 +446,10 @@ View.OnClickListener {
 		ipCodeEditText.setText(config.getIpCode());
 	}
 
+	protected void initSettingsTab(){
+
+	}
+
 	/**
 	 * places the data from this.config into the GUI.
 	 *
@@ -461,6 +470,9 @@ View.OnClickListener {
 
 		// Set the remote widget data
 		initRemoteWidgets();
+
+		//Set up the Setttings Tab
+		initSettingsTab();
 
 		// Set myself as the listener for the buttons
 		View v = findViewById(R.id.addPlayerButton);
@@ -774,6 +786,17 @@ View.OnClickListener {
 	private String remoteTabString() {
 		return this.getResources().getString(R.string.remote_tab);
 	}// remoteTabString
+
+
+	/**
+	 *  the label for the settings tab header
+	 *
+	 * @return
+	 * 		the label for the settings tab header
+	 */
+	private String settingsTabString(){
+		return this.getResources().getString(R.string.settings_tab);
+	}
 
 
 	/**

@@ -47,15 +47,17 @@ public class ClueLocalGame extends LocalGame
     ClueMoveAction moveAction;
     ClueState state;
     private Random rand;
+    private int numberOfAccuses = 1;
     public static String sync = "V";
 
     //Constructor
-    public ClueLocalGame(int numPlayerFromTableRows)
+    public ClueLocalGame(int numPlayerFromTableRows, int numberOfAccuses)
     {
         super();
         String[] str = new String[numPlayerFromTableRows];
         state = new ClueState(numPlayerFromTableRows,str, 0);
         rand = new Random();
+        this.numberOfAccuses = numberOfAccuses;
     }
 
     /**
@@ -135,7 +137,6 @@ public class ClueLocalGame extends LocalGame
         if(a instanceof ClueMoveAction)
         {
             moveAction = (ClueMoveAction)a;
-
 
             //Instance variables that will be used for some of the actions
             int x = 0; //Create current position variables
@@ -473,27 +474,37 @@ public class ClueLocalGame extends LocalGame
 
                     if (!solved) //The player lost
                     {
-                        //End the game for that player
-                        state.setPlayerStillInGame(curPlayerID, false);
+                        if(numberOfAccuses-1==0) {
+                            //End the game for that player
+                            state.setPlayerStillInGame(curPlayerID, false);
 
-                        //Move the player back to their "home position"
+                            //Move the player back to their "home position"
 
-                        switch (curPlayerID)
-                        {
-                            case 0: state.getBoard().setPlayerOnBoard(1, 17, x, y, curPlayerID);
+                            switch (curPlayerID) {
+                                case 0:
+                                    state.getBoard().setPlayerOnBoard(1, 17, x, y, curPlayerID);
                                     break;
-                            case 1: state.getBoard().setPlayerOnBoard(8, 24, x, y, curPlayerID);
+                                case 1:
+                                    state.getBoard().setPlayerOnBoard(8, 24, x, y, curPlayerID);
                                     break;
-                            case 2: state.getBoard().setPlayerOnBoard(25, 15, x, y, curPlayerID);
+                                case 2:
+                                    state.getBoard().setPlayerOnBoard(25, 15, x, y, curPlayerID);
                                     break;
-                            case 3: state.getBoard().setPlayerOnBoard(25, 10, x, y, curPlayerID);
+                                case 3:
+                                    state.getBoard().setPlayerOnBoard(25, 10, x, y, curPlayerID);
                                     break;
-                            case 4: state.getBoard().setPlayerOnBoard(19, 1, x, y, curPlayerID);
+                                case 4:
+                                    state.getBoard().setPlayerOnBoard(19, 1, x, y, curPlayerID);
                                     break;
-                            case 5: state.getBoard().setPlayerOnBoard(6, 1, x, y, curPlayerID);
+                                case 5:
+                                    state.getBoard().setPlayerOnBoard(6, 1, x, y, curPlayerID);
+                            }
+
+                            return true;
+                        }else{
+                            numberOfAccuses-=1;
+                            return true;
                         }
-
-                        return true;
                     }
                     else //The player won the game
                     {
@@ -1132,5 +1143,4 @@ public class ClueLocalGame extends LocalGame
             }
         }
     }
-
 }
