@@ -359,12 +359,15 @@ View.OnClickListener {
 		// Setup the tabbed dialog on the layout and add the content of each tab
 		TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
 		tabHost.setup();
+		//Adding Local Tab for Local Game or Host Game
 		TabSpec localTabSpec = tabHost.newTabSpec(localTabString());
 		localTabSpec.setContent(R.id.localGameTab);
 		localTabSpec.setIndicator(localTabString());
+		//Adding Remote Tab for Remote WiFi Game connection
 		TabSpec remoteTabSpec = tabHost.newTabSpec(remoteTabString());
 		remoteTabSpec.setContent(R.id.remoteGameTab);
 		remoteTabSpec.setIndicator(remoteTabString());
+		//Adding Settings Tab that can be customized to allow for customized rules
 		TabSpec settingsTabSpec = tabHost.newTabSpec(settingsTabString());
 		settingsTabSpec.setContent(R.id.gameSettingsTab);
 		settingsTabSpec.setIndicator(settingsTabString());
@@ -447,7 +450,7 @@ View.OnClickListener {
 	}
 
 	protected void initSettingsTab(){
-
+		//Override if the game has customizable rules
 	}
 
 	/**

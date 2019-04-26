@@ -198,7 +198,7 @@ public abstract class NetworkObjectPasser {
 				try {
 					Logger.debugLog(TAG, "ready to read object");
 					Object obj = in.readObject();
-					Logger.debugLog(TAG, "object read ("+obj.getClass()+")");
+					Logger.debugLog(TAG, "object read ("+obj.getClass()+")"); //TODO: toString
 					onReceiveObject(obj);
 				}
 				catch (Exception x) {
@@ -217,6 +217,7 @@ public abstract class NetworkObjectPasser {
 	 */
 	public void sendObject(Object obj) {
 		// schedule the "send" in the object's "sending" thread
+		//Check if the object is Serializable
 		if(!Serializable.class.isInstance(obj)){
 			Logger.log(TAG, "Object is not Serializable", Logger.ERROR);
 		}

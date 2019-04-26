@@ -81,6 +81,7 @@ public class ClueMainActivity extends GameMainActivity {
     @Override
     protected void initSettingsTab() {
         super.initSettingsTab();
+        //Laying out seeker bar so number of Accusations can be changed
         SeekBar sk = (SeekBar) findViewById(R.id.accuseNumberSeeker);
         sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -98,6 +99,8 @@ public class ClueMainActivity extends GameMainActivity {
 
             }
         });
+
+        //Text view to display the number of Accusations allowed
         TextView t=(TextView)findViewById(R.id.accuseNumberText);
         t.setText(getString(R.string.accuseNumberString)+" "+1);
     }

@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="20dp">
 
-    <!-- Customize Here -->
+    <!-- Customize Here for custom rules in the game-->
 
-
+    <!-- The Following is specific to Clue-->
     <TextView
         android:id="@+id/accuseNumberText"
         android:layout_width="match_parent"
