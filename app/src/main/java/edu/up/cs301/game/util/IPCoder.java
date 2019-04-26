@@ -45,7 +45,7 @@ public class IPCoder {
 			}
 		} catch (SocketException ex) {
 			//Log.e("IPCoder"/*this.toString()*/, ex.toString());
-			Logger.log("IPCoder"/*this.toString()*/, ""+ex.toString(), Logger.ERROR);
+			Logger.log(TAG, ""+ex.toString(), Logger.ERROR);
 		}
 		return "Unable to determine IP address";
 	}

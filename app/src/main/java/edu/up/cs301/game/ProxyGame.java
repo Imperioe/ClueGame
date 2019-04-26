@@ -73,31 +73,33 @@ public class ProxyGame implements Game {
         // set instance variables to their initial values
         player = null;
         ipCode = IPCoder.decodeIp(ipCode); // convert to IP address
-        
+
+		Logger.debugLog(TAG, "Creating Network Connection");
+
         // create the network-connector object
         networkPasser = new NetworkObjectPasser(ipCode, portNum) {
         	
         	// callback method, called whenever an object is sent to us from
         	// across the network
         	public void onReceiveObject(Object obj) {
-        		Logger.debugLog(TAG, "received object ("+obj.getClass()+")");
+        		Logger.debugLog(TAG, "Received object: "+obj.getClass());
         		try {
         			boolean b = obj instanceof GameInfo;
         			if (b) {
-        				// object is a GameStae object
+        				// object is a GameState object
         				GameInfo gs = (GameInfo)obj;
         				gs.setGame(ProxyGame.this);
         				synchronized(this) {
         					if (player == null) {
         						// if the player has not been connected, save the
         						// object in a queue
-        						Logger.debugLog(TAG, "adding object to queue");
+        						Logger.debugLog(TAG, "Adding object to queue");
         						queuedObjectsForPlayer.add(gs);
         					}
         					else {
         						// if the player has been connected, send the object
         						// directly to the player
-                				Logger.debugLog(TAG, "about to send state to player");
+                				Logger.debugLog(TAG, "About to send state to player");
                 				player.sendInfo(gs);
                 				Logger.debugLog(TAG, "... done sending state");
         					}
@@ -105,12 +107,12 @@ public class ProxyGame implements Game {
         			}
         			else {
         				// ignore if the object is not a GameInfo object
-        				Logger.debugLog(TAG, "object NOT being sent to player");
+        				Logger.debugLog(TAG, "Object NOT being sent to player");
         			}
         		}
         		catch (Exception x) {
         			// if any other exception occurs, log it
-        			Logger.debugLog(x.getClass().toString(), x.getMessage());
+        			Logger.log(TAG, "Class: "+x.getClass().toString()+ "   Message: " + x.getMessage(), Logger.ERROR);
         		}
         	}
         };
@@ -135,17 +137,24 @@ public class ProxyGame implements Game {
 	 * contain exactly one player.
 	 */
 	public void start(GamePlayer[] players) {
-		Logger.debugLog("ProxyGame", "start() called");
-		
+		Logger.debugLog(TAG, "Starting");
+
 		// if player has already been bound, ignore
-		if (player != null) return;
+		if (player != null){
+			Logger.debugLog(TAG, "Player "+player.getClass()+" already bound");
+			return;
+		}
 		
 		// if the player array somehow something other than
 		// a single element, ignore
-		if (players.length != 1) return;
+		if (players.length != 1){
+			Logger.debugLog(TAG, "The Player array is the incorrect size");
+			return;
+		}
 		
 		// start the player
 		if (players[0] != null) {
+			Logger.debugLog(TAG, "Starting Player");
 			players[0].start(); // start our player
 		}
 		
@@ -166,7 +175,7 @@ public class ProxyGame implements Game {
 			}
 			
 			// send the just=unqueued object to the player
-			Logger.debugLog(TAG, "sending queued object to player ("+unqueuedObject.getClass()+")");
+			Logger.debugLog(TAG, "Sending queued object to player: "+unqueuedObject.getClass());
 			players[0].sendInfo(unqueuedObject);
 		}
 	}
