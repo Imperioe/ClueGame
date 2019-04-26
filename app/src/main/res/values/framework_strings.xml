@@ -25,6 +25,7 @@ really need to.-->
     <!--The following strings are for the tabs on the game_config_main screen-->
     <string name="local_tab">Local Game</string>
     <string name="remote_tab">Remote Game</string>
+    <string name="settings_tab">Game Settings</string>
     <!--The following strings are used in the game_config_main for displaying the different types
     of players. These strings are used in MainActivity and GameConfig.-->
     <string name="Human_Player_Name">Human Player</string>

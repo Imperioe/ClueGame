@@ -209,18 +209,18 @@ public abstract class GameHumanPlayer implements GamePlayer, Tickable {
 		while (myHandler == null) Thread.yield();
 
 		// post message to the handler
-		Log.d("sendInfo", "about to post");
+		Log.d(TAG, "sendInfo - about to post");
 		myHandler.post(new MyRunnable(info, false));
-		Log.d("sendInfo", "done with post");
+		Log.d(TAG, "sendInfo - done with post");
 	}
 
 	public void sendInfoInitial(GameInfo info) {
 		// wait until handler is there
 		while (saveMe == null) Thread.yield();
 		// post message to the handler
-		Log.d("sendInfo", "about to post");
+		Log.d(TAG, "sendInfoInitial - about to post");
 		saveMe.post(new MyRunnable(info, true));
-		Log.d("sendInfo", "done with post");
+		Log.d(TAG, "sendInfoInitial - done with post");
 	}
 
 	/**

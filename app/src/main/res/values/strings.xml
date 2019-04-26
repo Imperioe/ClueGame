@@ -33,4 +33,6 @@ application here, if necessary.-->
         <item>Miss Scarlet</item>
         <item>Mrs. White</item>
     </string-array>
+    <!--The following strings are for custom game rules-->
+    <string name="accuseNumberString">Number of Accusations:</string>
 </resources>

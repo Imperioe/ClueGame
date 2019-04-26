@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Hashtable;
@@ -206,7 +207,7 @@ public abstract class NetworkObjectPasser {
 				try {
 					Logger.debugLog(TAG, "Ready to read object");
 					Object obj = in.readObject();
-					Logger.debugLog(TAG, "Read Object: "+obj.getClass());
+					Logger.debugLog(TAG, "object read ("+obj.getClass()+")"); //TODO: toString
 					onReceiveObject(obj);
 				}
 				catch (Exception x) {
@@ -227,6 +228,11 @@ public abstract class NetworkObjectPasser {
 	 */
 	public void sendObject(Object obj) {
 		// schedule the "send" in the object's "sending" thread
+		//Check if the object is Serializable
+		if(!Serializable.class.isInstance(obj)){
+			Logger.log(TAG, "Object is not Serializable", Logger.ERROR);
+		}
+
 		Runnable run = new MsgRunnable(obj);
 		sendHandler.post(run);
 	}
